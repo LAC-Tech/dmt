@@ -8,23 +8,29 @@ It can be used directly in html:
   import dmt from "https://unpkg.com/@lewis-campbell/dmt"
 
   const tests = {
-		'Array': {
-			'#indexOf()': {
-				'should return -1 when the value is not present': () => ({
-					check: [1, 2, 3].indexOf(4),
-					equals: -1
-				})
-			},
-			'#map()': {
-				'should map [] to []': () => ({
-					check: [].map(x => x * x),
-					deepEquals: []
-				})
-			}
-		}
-	}
+    'Array': {
+      '#indexOf()': {
+        'should return -1 when the value is not present': () => ({
+          check: [1, 2, 3].indexOf(4),
+          equals: -1
+        })
+      },
+      '#map()': {
+        'should map [] to []': () => ({
+          check: [].map(x => x * x),
+          deepEquals: []
+        })
+      }
+    },
+    'Promise': {
+      'resolve()': async () => ({
+        check: Promise.resolve('Success'),
+        equals: 'Success'
+      })
+    }
+  }
 
-	dmt(document.body, tests)
+  dmt(document.body, tests)
 </script>
 ```
 

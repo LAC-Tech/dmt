@@ -1,21 +1,27 @@
 <!-- Example -->
 <script type="module">
-	import dmt from "./dist/dist.js"
+  import dmt from "./dist/dist.js"
 
-	dmt(document.body, {
-		'Array': {
-			'#indexOf()': {
-				'should return -1 when the value is not present': () => ({
-					check: [1, 2, 3].indexOf(4),
-					equals: -1
-				})
-			},
-			'#map()': {
-				'should map [] to []': () => ({
-					check: [].map(x => x * x),
-					deepEquals: []
-				})
-			}
-		}
-	})
+  dmt(document.body, {
+    'Array': {
+      '#indexOf()': {
+        'should return -1 when the value is not present': () => ({
+          check: [1, 2, 3].indexOf(4),
+          equals: -1
+        })
+      },
+      '#map()': {
+        'should map [] to []': () => ({
+          check: [].map(x => x * x),
+          deepEquals: []
+        })
+      }
+    },
+    'Promise': {
+      'resolve()': async () => {
+        const actual = await Promise.resolve('Success')
+        return {check: actual, equals: 'Success'}
+      }
+    }
+  })
 </script>
