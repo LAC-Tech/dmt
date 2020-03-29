@@ -20,6 +20,6 @@ It can be used directly in html:
 
   dmt.run(document.body, {client: clientTests})
 </script>
-```html
+```
 
 Or you can have it built in a seperate module, using HMR or browsersync to re-run the tests each time code changes.
