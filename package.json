@@ -1,6 +1,6 @@
 {
   "name": "@lewis-campbell/dmt",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A declarative, minimalist testing library for the browser",
   "main": "./dist/dist.js",
   "types": "./dist/index.d.ts",
