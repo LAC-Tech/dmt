@@ -3,17 +3,11 @@ import {Suite, TestResult, Test, Summary, R} from './types'
 import {combineSummaries, evaluateSuite, isTestResult} from './core'
 import * as view from './views'
 
-export {run, evaluateSuite, Suite, Test, TestResult}
-
-const run = async (
+export default async (
 	elem: HTMLElement,
-	{client, server}: Partial<{client: Suite<Test>, server: Suite<TestResult>}>
+	testSuite: Suite<Test>
 ) => {
-	const suite = {
-		server: server || {},
-		client: await evaluateSuite(client || {})
-	}
-
+	const suite = await evaluateSuite(testSuite)
 	const {views, summary} = await render(name, suite, 0)
 
 	const {fails} = summary

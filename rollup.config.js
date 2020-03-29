@@ -1,5 +1,7 @@
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
+import { terser } from "rollup-plugin-terser"
+
 
 export default {
 	external: ['events'],
@@ -10,6 +12,13 @@ export default {
   },
   plugins: [
   	resolve(),
-    commonjs()
+    commonjs(),
+    terser({
+      compress: true,
+      mangle: true,
+      output: {
+        comments: false
+      }
+    })
   ]
 }

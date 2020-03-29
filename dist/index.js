@@ -49,34 +49,24 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 var lit_html_1 = require("lit-html");
 var core_1 = require("./core");
-exports.evaluateSuite = core_1.evaluateSuite;
 var view = require("./views");
-var run = function (elem, _a) {
-    var client = _a.client, server = _a.server;
-    return __awaiter(void 0, void 0, void 0, function () {
-        var suite, _b, _c, views, summary, fails;
-        return __generator(this, function (_d) {
-            switch (_d.label) {
-                case 0:
-                    _b = {
-                        server: server || {}
-                    };
-                    return [4 /*yield*/, core_1.evaluateSuite(client || {})];
-                case 1:
-                    suite = (_b.client = _d.sent(),
-                        _b);
-                    return [4 /*yield*/, render(name, suite, 0)];
-                case 2:
-                    _c = _d.sent(), views = _c.views, summary = _c.summary;
-                    fails = summary.fails;
-                    document.title = "tests " + (fails == 0 ? '✓' : "\u2716" + fails);
-                    lit_html_1.render(view.root(views), elem);
-                    return [2 /*return*/];
-            }
-        });
+exports["default"] = (function (elem, testSuite) { return __awaiter(void 0, void 0, void 0, function () {
+    var suite, _a, views, summary, fails;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0: return [4 /*yield*/, core_1.evaluateSuite(testSuite)];
+            case 1:
+                suite = _b.sent();
+                return [4 /*yield*/, render(name, suite, 0)];
+            case 2:
+                _a = _b.sent(), views = _a.views, summary = _a.summary;
+                fails = summary.fails;
+                document.title = "tests " + (fails == 0 ? '✓' : "\u2716" + fails);
+                lit_html_1.render(view.root(views), elem);
+                return [2 /*return*/];
+        }
     });
-};
-exports.run = run;
+}); });
 var render = function (name, suite, depth) { return __awaiter(void 0, void 0, void 0, function () {
     var success, summary_1, asyncChildren, children, views, summary;
     return __generator(this, function (_a) {
