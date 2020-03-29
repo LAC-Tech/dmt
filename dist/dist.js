@@ -3920,7 +3920,7 @@ var render = function (name, suite, depth) { return __awaiter(void 0, void 0, vo
                         return __generator(this, function (_c) {
                             switch (_c.label) {
                                 case 0:
-                                    _b = [{ name: subName, depth: depth + 1 }];
+                                    _b = [{ name: subName, depth: depth + 1, suite: subSuite }];
                                     return [4 /*yield*/, render(subName, subSuite, depth + 1)];
                                 case 1: return [2 /*return*/, (__assign.apply(void 0, _b.concat([_c.sent()])))];
                             }
@@ -3930,7 +3930,12 @@ var render = function (name, suite, depth) { return __awaiter(void 0, void 0, vo
                 return [4 /*yield*/, Promise.all(asyncChildren)];
             case 1:
                 children = _a.sent();
-                views$1 = children.flatMap(views.node);
+                views$1 = children.flatMap(function (n) {
+                    if (core.isTestResult(n.suite))
+                        return views.testResult(n.name, n.suite);
+                    else
+                        return views.node(n);
+                });
                 summary = core.combineSummaries(children.map(function (c) { return c.summary; }));
                 return [2 /*return*/, { views: views$1, summary: summary }];
         }

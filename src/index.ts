@@ -37,12 +37,19 @@ const render = async (
 		.map(async ([subName, subSuite]) => ({
 			name: subName,
 			depth: depth+1,
+			suite: subSuite,
 			...await render(subName, subSuite, depth+1)
 		}))
 
 	const children = await Promise.all(asyncChildren)
 
-	const views = children.flatMap(view.node)
+	const views = children.flatMap(n => {
+		if (isTestResult(n.suite)) 
+			return view.testResult(n.name, n.suite)
+		else
+			return view.node(n)
+	})
+
 	const summary = combineSummaries(children.map(c => c.summary))
 
 	return {views, summary}
