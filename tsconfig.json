@@ -1,0 +1,9 @@
+{
+	"compilerOptions": {
+		"lib": ["dom", "es2019"],
+		"strict": true,
+		"rootDir": "src",
+		"outDir": "dist",
+		"declaration": true
+	}
+}
