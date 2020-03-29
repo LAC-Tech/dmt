@@ -23,10 +23,10 @@ It can be used directly in html:
       }
     },
     'Promise': {
-      'resolve()': async () => ({
-        check: Promise.resolve('Success'),
-        equals: 'Success'
-      })
+      'resolve()': async () => {
+        const actual = await Promise.resolve('Success')
+        return {check: actual, equals: 'Success'}
+      }
     }
   }
 
