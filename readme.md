@@ -5,20 +5,20 @@ It can be used directly in html:
 
 ```html
 <script type="module">
-	import dmt from "https://unpkg.com/@lewis-campbell/dmt"
+  import dmt from "https://unpkg.com/@lewis-campbell/dmt"
 
-	const clientTests =	{
-		'Array': {
-			'#indexOf()': {
-				'should return -1 when the value is not present': () => ({
-					check: [1, 2, 3].indexOf(4),
-					equals: -1
-				})
-			}
-		}
-	}
+  const clientTests =	{
+    'Array': {
+      '#indexOf()': {
+        'should return -1 when the value is not present': () => ({
+          check: [1, 2, 3].indexOf(4),
+          equals: -1
+        })
+      }
+    }
+  }
 
-	dmt.run(document.body, {client: clientTests})
+  dmt.run(document.body, {client: clientTests})
 </script>
 ```html
 

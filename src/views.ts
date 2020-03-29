@@ -79,8 +79,7 @@ const diff = (
 const root = (views: TemplateResult[]) => html`
 	<style>
 	.h1 {
-		font-size: larger;
-		margin-bottom: 0.5em;	
+		margin-left: 0em;	
 	}
 
 	.h2 {
