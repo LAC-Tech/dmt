@@ -14,16 +14,6 @@ const combineSummaries = (ss: Summary[]) => ss.reduce((x, y) => ({
 	fails: x.fails + y.fails
 }), {passes: 0, fails: 0})
 
-const equalFromBinaryPredicate = (
-	equal: (a: any, b: any) => boolean
-) => (actual: any, expected: any): TestResult => {
-	if (!equal(actual, expected)) return {kind: 'fail',	actual,	expected}
-	return {kind: 'success'}
-}
-
-const deepEqual = equalFromBinaryPredicate(deepEql)
-const equal = equalFromBinaryPredicate((a, b) => a === b)
-
 const isTest = (t: Test | Suite<Test>): t is Test => typeof t === "function"
 
 const isTestResult = (
@@ -36,14 +26,37 @@ const isTestResult = (
 	return false
 }
 
+const equalFromBinaryPredicate = (
+	equal: (a: any, b: any) => boolean
+) => (actual: any, expected: any): TestResult => {
+	if (!equal(actual, expected)) return {kind: 'fail',	actual,	expected}
+	return {kind: 'success'}
+}
+
+const deepEqual = equalFromBinaryPredicate(deepEql)
+const equal = equalFromBinaryPredicate((a, b) => a === b)
+
+const throws = (checkThunk: () => any, expectedExn: any) => {
+	const check = (() => {
+		try {
+			return checkThunk()
+		} catch (actualExn) {
+			return actualExn
+		}
+	})()
+
+	return deepEqual(check, expectedExn)
+}
+
 const evaluateTest = async (test: Test): Promise<TestResult> => {
 	try {
 		const calledTest = await Promise.resolve(test())
 		const {check} = calledTest
 
-		const result = 'deepEquals' in calledTest ? 
-			deepEqual(check, calledTest.deepEquals) :
-			equal(check, calledTest.equals)
+		const result = 
+			'deepEquals' in calledTest ? deepEqual(check, calledTest.deepEquals) :
+			'equals' in calledTest ? equal(check, calledTest.equals) :
+			throws(check, calledTest.throws)
 
 		return result
 	} catch (error) {

@@ -42,13 +42,6 @@ var combineSummaries = function (ss) { return ss.reduce(function (x, y) { return
     fails: x.fails + y.fails
 }); }, { passes: 0, fails: 0 }); };
 exports.combineSummaries = combineSummaries;
-var equalFromBinaryPredicate = function (equal) { return function (actual, expected) {
-    if (!equal(actual, expected))
-        return { kind: 'fail', actual: actual, expected: expected };
-    return { kind: 'success' };
-}; };
-var deepEqual = equalFromBinaryPredicate(deepEql);
-var equal = equalFromBinaryPredicate(function (a, b) { return a === b; });
 var isTest = function (t) { return typeof t === "function"; };
 var isTestResult = function (t) {
     if (t.kind === 'exn')
@@ -60,6 +53,24 @@ var isTestResult = function (t) {
     return false;
 };
 exports.isTestResult = isTestResult;
+var equalFromBinaryPredicate = function (equal) { return function (actual, expected) {
+    if (!equal(actual, expected))
+        return { kind: 'fail', actual: actual, expected: expected };
+    return { kind: 'success' };
+}; };
+var deepEqual = equalFromBinaryPredicate(deepEql);
+var equal = equalFromBinaryPredicate(function (a, b) { return a === b; });
+var throws = function (checkThunk, expectedExn) {
+    var check = (function () {
+        try {
+            return checkThunk();
+        }
+        catch (actualExn) {
+            return actualExn;
+        }
+    })();
+    return deepEqual(check, expectedExn);
+};
 var evaluateTest = function (test) { return __awaiter(void 0, void 0, void 0, function () {
     var calledTest, check, result, error_1;
     return __generator(this, function (_a) {
@@ -70,9 +81,9 @@ var evaluateTest = function (test) { return __awaiter(void 0, void 0, void 0, fu
             case 1:
                 calledTest = _a.sent();
                 check = calledTest.check;
-                result = 'deepEquals' in calledTest ?
-                    deepEqual(check, calledTest.deepEquals) :
-                    equal(check, calledTest.equals);
+                result = 'deepEquals' in calledTest ? deepEqual(check, calledTest.deepEquals) :
+                    'equals' in calledTest ? equal(check, calledTest.equals) :
+                        throws(check, calledTest.throws);
                 return [2 /*return*/, result];
             case 2:
                 error_1 = _a.sent();

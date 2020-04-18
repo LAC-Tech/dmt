@@ -6,11 +6,14 @@ export declare type Summary = Readonly<{
 }>;
 export declare type Assertion = {
     check: any;
-} & ({
     deepEquals: any;
 } | {
+    check: any;
     equals: any;
-});
+} | {
+    check: () => any;
+    throws: any;
+};
 export declare type Test = (() => Assertion) | (() => Promise<Assertion>);
 export declare type TestResult = {
     kind: 'success';

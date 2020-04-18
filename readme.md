@@ -1,7 +1,6 @@
-DMT is a declarative, minimalist testing library written in typescript.
-DMT has one function that takes a simple data structure that is itself the test suite. No need for special setup, teardown methods when you have objects and closures already.
+A declarative, minimalist testing library for the browser. The API is one function, that takes a simple data structure that is the test suite. No need for special setup, teardown etc methods when you have objects and closures already. It can automatically run on the browser after webpack is done rebuilding, so it's good for running tests on phones.
 
-It can be used directly in html:
+Example:
 
 ```html
 <script type="module">
@@ -33,5 +32,3 @@ It can be used directly in html:
   dmt(document.body, tests)
 </script>
 ```
-
-Alternatively you can have it built in a seperate module, using HMR or browsersync to re-run the tests each time code changes.

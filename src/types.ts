@@ -8,8 +8,12 @@ export type R = TemplateResult
 
 export type Summary = Readonly<{passes: number, fails: number}>
 
-export type Assertion = {check: any} & ({deepEquals: any} | {equals: any})
-export type Test = (() => Assertion) | (() => Promise<Assertion>)
+export type Assertion = 
+	{check: any, deepEquals: any} |
+	{check: any, equals: any} |
+	{check: () => any, throws: any}
+
+	export type Test = (() => Assertion) | (() => Promise<Assertion>)
 
 export type TestResult =  
 	| {kind: 'success'}
