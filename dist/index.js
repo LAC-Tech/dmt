@@ -67,7 +67,7 @@ exports["default"] = (function (elem, testSuite) { return __awaiter(void 0, void
         }
     });
 }); });
-var render = function (name, suite, depth) { return __awaiter(void 0, void 0, void 0, function () {
+var render = function (name, suite, indent) { return __awaiter(void 0, void 0, void 0, function () {
     var success, count_1, asyncChildren, children, views, count;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -84,8 +84,8 @@ var render = function (name, suite, depth) { return __awaiter(void 0, void 0, vo
                         return __generator(this, function (_c) {
                             switch (_c.label) {
                                 case 0:
-                                    _b = [{ name: subName, depth: depth + 1, suite: subSuite }];
-                                    return [4 /*yield*/, render(subName, subSuite, depth + 1)];
+                                    _b = [{ name: subName, suite: subSuite, indent: indent + 1 }];
+                                    return [4 /*yield*/, render(subName, subSuite, indent + 1)];
                                 case 1: return [2 /*return*/, (__assign.apply(void 0, _b.concat([_c.sent()])))];
                             }
                         });

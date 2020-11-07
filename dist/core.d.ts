@@ -1,9 +1,6 @@
 import { Suite, TestResult, Count, Test } from './types';
 export { sumCounts, evaluateSuite, deepMap, isTestResult };
-declare const sumCounts: (cs: Count[]) => Readonly<{
-    passes: number;
-    fails: number;
-}>;
+declare const sumCounts: (cs: Count[]) => Count;
 declare const isTestResult: (t: TestResult | Suite<TestResult>) => t is TestResult;
 declare const evaluateTest: (test: Test) => Promise<TestResult>;
 declare const evaluateSuite: (suite: Suite<Test>) => Promise<Suite<TestResult>>;

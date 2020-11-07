@@ -1,9 +1,9 @@
 import { TemplateResult } from 'lit-html';
-export declare type R = TemplateResult;
-export declare type Count = Readonly<{
+export declare type HtmlTemplate = TemplateResult;
+export interface Count {
     passes: number;
     fails: number;
-}>;
+}
 export declare type Assertion = {
     check: any;
     deepEquals: any;

@@ -7,14 +7,21 @@
   "dependencies": {
     "deep-eql": "^4.0.0",
     "diff": "^4.0.2",
-    "lit-html": "^1.2.1",
-    "rollup-plugin-terser": "^5.3.0"
+    "lit-html": "^1.2.1"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^11.0.2",
     "@rollup/plugin-node-resolve": "^7.1.1",
     "@types/diff": "^4.0.2",
     "@types/node": "^12.12.31",
+    "http-server": "^0.12.3",
+    "rollup": "^2.33.1",
+    "rollup-plugin-terser": "^5.3.0",
     "typescript": "^3.8.3"
+  },
+  "scripts": {
+		"build": "rollup -c",
+		"watch": "tsc --watch",
+    "test": "http-server"
   }
 }

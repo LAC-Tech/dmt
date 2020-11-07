@@ -5,9 +5,10 @@ import {TemplateResult} from 'lit-html'
 	sense
 */
 
-export type R = TemplateResult
+// Just in case I change view library
+export type HtmlTemplate = TemplateResult
 
-export type Count = Readonly<{passes: number, fails: number}>
+export interface Count {passes: number, fails: number}
 
 export type Assertion = 
 	| {check: any, deepEquals: any}
