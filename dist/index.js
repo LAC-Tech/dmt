@@ -51,7 +51,7 @@ var lit_html_1 = require("lit-html");
 var core_1 = require("./core");
 var view = require("./views");
 exports["default"] = (function (elem, testSuite) { return __awaiter(void 0, void 0, void 0, function () {
-    var suite, _a, views, summary, fails;
+    var suite, _a, views, count, fails;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0: return [4 /*yield*/, core_1.evaluateSuite(testSuite)];
@@ -59,8 +59,8 @@ exports["default"] = (function (elem, testSuite) { return __awaiter(void 0, void
                 suite = _b.sent();
                 return [4 /*yield*/, render(name, suite, 0)];
             case 2:
-                _a = _b.sent(), views = _a.views, summary = _a.summary;
-                fails = summary.fails;
+                _a = _b.sent(), views = _a.views, count = _a.count;
+                fails = count.fails;
                 document.title = "tests " + (fails == 0 ? '✓' : "\u2716" + fails);
                 lit_html_1.render(view.root(views), elem);
                 return [2 /*return*/];
@@ -68,18 +68,16 @@ exports["default"] = (function (elem, testSuite) { return __awaiter(void 0, void
     });
 }); });
 var render = function (name, suite, depth) { return __awaiter(void 0, void 0, void 0, function () {
-    var success, summary_1, asyncChildren, children, views, summary;
+    var success, count_1, asyncChildren, children, views, count;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 if (core_1.isTestResult(suite)) {
                     success = suite.kind === 'success';
-                    summary_1 = success ? { passes: 1, fails: 0 } : { passes: 0, fails: 1 };
-                    return [2 /*return*/, { summary: summary_1, views: view.testResult(name, suite) }];
+                    count_1 = success ? { passes: 1, fails: 0 } : { passes: 0, fails: 1 };
+                    return [2 /*return*/, { count: count_1, views: view.testResult(name, suite) }];
                 }
-                asyncChildren = Object
-                    .entries(suite)
-                    .map(function (_a) {
+                asyncChildren = Object.entries(suite).map(function (_a) {
                     var subName = _a[0], subSuite = _a[1];
                     return __awaiter(void 0, void 0, void 0, function () {
                         var _b;
@@ -97,13 +95,10 @@ var render = function (name, suite, depth) { return __awaiter(void 0, void 0, vo
             case 1:
                 children = _a.sent();
                 views = children.flatMap(function (n) {
-                    if (core_1.isTestResult(n.suite))
-                        return view.testResult(n.name, n.suite);
-                    else
-                        return view.node(n);
+                    return core_1.isTestResult(n.suite) ? view.testResult(n.name, n.suite) : view.node(n);
                 });
-                summary = core_1.combineSummaries(children.map(function (c) { return c.summary; }));
-                return [2 /*return*/, { views: views, summary: summary }];
+                count = core_1.sumCounts(children.map(function (c) { return c.count; }));
+                return [2 /*return*/, { views: views, count: count }];
         }
     });
 }); };

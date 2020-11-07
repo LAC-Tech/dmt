@@ -4,6 +4,7 @@ var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cook
     return cooked;
 };
 exports.__esModule = true;
+exports.root = exports.testResult = exports.node = void 0;
 var lit_html_1 = require("lit-html");
 var diffJson = require('diff').diffJson;
 var successResult = function (description) {
@@ -35,8 +36,8 @@ var testResult = function (description, result) {
 };
 exports.testResult = testResult;
 var node = function (_a) {
-    var name = _a.name, summary = _a.summary, depth = _a.depth, views = _a.views;
-    var passes = summary.passes, fails = summary.fails;
+    var name = _a.name, count = _a.count, depth = _a.depth, views = _a.views;
+    var passes = count.passes, fails = count.fails;
     return lit_html_1.html(templateObject_6 || (templateObject_6 = __makeTemplateObject(["\n\t\t<details ?open=", ">\n\t\t\t<summary class=", ">\n\t\t\t\t<b>", "</b>\n\t\t\t\t", "\n\t\t\t\t", "\n\t\t\t</summary>\n\t\t\t", "\n\t\t</details>"], ["\n\t\t<details ?open=", ">\n\t\t\t<summary class=", ">\n\t\t\t\t<b>", "</b>\n\t\t\t\t", "\n\t\t\t\t", "\n\t\t\t</summary>\n\t\t\t", "\n\t\t</details>"])), fails != 0, "h" + depth, name, text('success', '✓', passes), text('fail', '✖', fails), views);
 };
 exports.node = node;

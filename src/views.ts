@@ -1,5 +1,5 @@
 import {html, TemplateResult} from 'lit-html'
-import {Summary, R, TestResult} from './types'
+import {Count, R, TestResult} from './types'
 const {diffJson} = require('diff')
 
 export {node, testResult, root}
@@ -40,13 +40,13 @@ const testResult = (description: string, result: TestResult) => {
 	}
 }
 
-const node = ({name, summary, depth, views}: {
+const node = ({name, count, depth, views}: {
 	name: string,
-	summary: Summary,
+	count: Count,
 	depth: number,
-	views: R[]
+	views: R[] // TODO: wtf are 'views' here?
 }) => {
-	const {passes, fails} = summary
+	const {passes, fails} = count
 
 	return html`
 		<details ?open=${fails != 0}>

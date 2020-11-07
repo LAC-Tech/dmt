@@ -1,6 +1,6 @@
 import { TemplateResult } from 'lit-html';
 export declare type R = TemplateResult;
-export declare type Summary = Readonly<{
+export declare type Count = Readonly<{
     passes: number;
     fails: number;
 }>;

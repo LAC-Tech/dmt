@@ -1,24 +1,16 @@
 const deepEql = require('deep-eql')
 
-import {
-	Suite,
-	TestResult,
-	Summary,
-	Test
-} from './types'
+import {Suite, TestResult, Count, Test} from './types'
+export {sumCounts, evaluateSuite, deepMap, isTestResult}
 
-export {combineSummaries, evaluateSuite, deepMap, isTestResult}
-
-const combineSummaries = (ss: Summary[]) => ss.reduce((x, y) => ({
+const sumCounts = (cs: Count[]) => cs.reduce((x, y) => ({
 	passes: x.passes + y.passes,
 	fails: x.fails + y.fails
 }), {passes: 0, fails: 0})
 
 const isTest = (t: Test | Suite<Test>): t is Test => typeof t === "function"
 
-const isTestResult = (
-	t: TestResult | Suite<TestResult>
-): t is TestResult => {
+const isTestResult = (t: TestResult | Suite<TestResult>): t is TestResult => {
 	if (t.kind === 'exn') return 'error' in t
 	if (t.kind === 'fail') return 'actual' in t && 'expected' in t
 	if (t.kind === 'success') return true

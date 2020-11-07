@@ -36,12 +36,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
+exports.isTestResult = exports.deepMap = exports.evaluateSuite = exports.sumCounts = void 0;
 var deepEql = require('deep-eql');
-var combineSummaries = function (ss) { return ss.reduce(function (x, y) { return ({
+var sumCounts = function (cs) { return cs.reduce(function (x, y) { return ({
     passes: x.passes + y.passes,
     fails: x.fails + y.fails
 }); }, { passes: 0, fails: 0 }); };
-exports.combineSummaries = combineSummaries;
+exports.sumCounts = sumCounts;
 var isTest = function (t) { return typeof t === "function"; };
 var isTestResult = function (t) {
     if (t.kind === 'exn')
