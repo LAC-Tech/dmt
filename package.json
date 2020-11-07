@@ -7,7 +7,8 @@
   "dependencies": {
     "deep-eql": "^4.0.0",
     "diff": "^4.0.2",
-    "lit-html": "^1.2.1"
+    "lit-html": "^1.2.1",
+    "src": "^1.1.2"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^11.0.2",
@@ -20,8 +21,8 @@
     "typescript": "^3.8.3"
   },
   "scripts": {
-		"build": "rollup -c",
-		"watch": "tsc --watch",
-    "test": "http-server"
+    "build": "rollup -c",
+    "watch": "tsc --watch",
+    "test": "browser-sync start --server --files *"
   }
 }

@@ -18,15 +18,15 @@ const isTestResult = (t: TestResult | Suite<TestResult>): t is TestResult => {
 	return false
 }
 
-const equalFromBinaryPredicate = (
+const equalFromPredicate = (
 	equal: (a: any, b: any) => boolean
 ) => (actual: any, expected: any): TestResult => {
 	if (!equal(actual, expected)) return {kind: 'fail',	actual,	expected}
 	return {kind: 'success'}
 }
 
-const deepEqual = equalFromBinaryPredicate(deepEql)
-const equal = equalFromBinaryPredicate((a, b) => a === b)
+const deepEqual = equalFromPredicate(deepEql)
+const equal = equalFromPredicate((a, b) =>  === b)
 
 const throws = (checkThunk: () => any, expectedExn: any) => {
 	const check = (() => {
@@ -52,7 +52,7 @@ const evaluateTest = async (test: Test): Promise<TestResult> => {
 
 		return result
 	} catch (error) {
-		return {kind: 'exn', error}
+		return {kind: 'exn', stacktrace: error.stack}
 	}
 }
 

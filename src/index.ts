@@ -5,21 +5,21 @@ import * as view from './views'
 
 export default async (elem: HTMLElement, testSuite: Suite<Test>) => {
 	const suite = await evaluateSuite(testSuite)
-	const {views, count} = await render(name, suite, 0)
+	const {templates, count} = await render(name, suite, 0)
 
 	const {fails} = count
 	document.title = `tests ${fails == 0 ? '✓': `✖${fails}`}`
-	litHtmlRender(view.root(views),	elem)
+	litHtmlRender(view.root(templates),	elem)
 }
 
 const render = async (
 	name: string, suite: Suite<TestResult> | TestResult, indent: number
-): Promise<{views: HtmlTemplate[], count: Count}> => {
+): Promise<{templates: HtmlTemplate[], count: Count}> => {
 	
 	if (isTestResult(suite)) {
 		const success = suite.kind === 'success'
 		const count = success ? {passes: 1, fails: 0} : {passes: 0, fails: 1}
-		return {count, views: view.testResult(name, suite)}
+		return {count, templates: view.testResult(name, suite)}
 	}
 
 	// TODO: what in the fuck are 'asyncChildren' ?
@@ -34,11 +34,11 @@ const render = async (
 
 	const children = await Promise.all(asyncChildren)
 
-	const views = children.flatMap(n => 
+	const templates = children.flatMap(n => 
 		isTestResult(n.suite) ? view.testResult(n.name, n.suite) : view.node(n)
 	)
 
 	const count = sumCounts(children.map(c => c.count))
 
-	return {views, count}
+	return {templates, count}
 }

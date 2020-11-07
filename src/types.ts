@@ -20,6 +20,6 @@ export type Test = (() => Assertion) | (() => Promise<Assertion>)
 export type TestResult =
 	| {kind: 'success'}
 	| {kind: 'fail', actual: any,	expected: any}
-	| {kind: 'exn', error: Error}
+	| {kind: 'exn', stacktrace: string}
 
 export type Suite<T> = {readonly [key:string]: Suite<T> | T}

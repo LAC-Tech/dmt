@@ -7,9 +7,9 @@ export {node, testResult, root}
 const successResult = (description: string) =>
 	testOutput([success('✓'), description])
 
-const failResult = (description: string, error: Error) => ([
+const failResult = (description: string, stacktrace: string) => ([
 	[fail('✖'), description],
-	[`error: '${error}'`]
+	[`stacktrace: ${stacktrace}`]
 ].map(testOutput))
 
 const success = (text: string) => html`<span class="success">${text}</span>`
@@ -34,17 +34,16 @@ const testResult = (description: string, result: TestResult) => {
 			diff(description, diffJson(result.actual, result.expected))
 		])
 		case 'exn': {
-			console.error(result)
-			return failResult(description, result.error)
+			return failResult(description, result.stacktrace)
 		}
 	}
 }
 
-const node = ({name, count, indent, views}: {
+const node = ({name, count, indent, templates}: {
 	name: string,
 	count: Count,
 	indent: number,
-	views: HtmlTemplate[] // TODO: 'views' of what?
+	templates: HtmlTemplate[] // TODO: 'views' of what?
 }) => {
 	const {passes, fails} = count
 
@@ -55,7 +54,7 @@ const node = ({name, count, indent, views}: {
 				${text('success', '✓', passes)}
 				${text('fail', '✖', fails)}
 			</summary>
-			${views}
+			${templates}
 		</details>`
 }
 
