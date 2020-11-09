@@ -7,9 +7,15 @@ Example:
 ```html
 <script type="module">
   import dmt from "https://unpkg.com/@lewis-campbell/dmt"
- 
 
   dmt(document.body, {
+    'Promise': {
+      '#resolve()': async () => {
+        const actual = await Promise.resolve('Success')
+        return {check: actual, equals: 'Success'}
+      }
+    },
+    
     'Array': {
       '#indexOf()': {
         'should return -1 when the value is not present': () => ({
@@ -23,12 +29,6 @@ Example:
           deepEquals: []
         })
       }
-    },
-    'Promise': {
-      'resolve()': async () => {
-        const actual = await Promise.resolve('Success')
-        return {check: actual, equals: 'Success'}
-      }
     }
   })
 </script>
@@ -41,9 +41,8 @@ use a popular framework like Mocha.
 
 I hated it:
 - test files use un-declared global functions
-- required an external library to do assertions
-- over-complicated
-- the browser output did not refresh after code had been built
+- needs a separate binary to run tests
+- couldn't refresh the browser after bundling
 
 I wanted to create something that was declarative, minmalist, unobtrusive, and got the job done.
 
@@ -57,8 +56,7 @@ DMT doesn't have global functions like `describe`, `beforeEach`, `afterEach` etc
 
 I'm a simple man, and I really only need two assertions - 'equals' for primitives, and 'deepEquals' for arrays and objects. 
 
-{@link https://medium.com/javascript-scene/rethinking-unit-test-assertions-55f59358253f|'Rethinking Unit Test Assertions
-' by Eric Elliot}
+Check out the article [Rethinking Unit Test Assertions](https://medium.com/javascript-scene/rethinking-unit-test-assertions-55f59358253f) by Eric Elliot.
 
 ### Doesn't impose a workflow on you.
 
@@ -67,7 +65,6 @@ You decide, when, where, and how you run to tests by passing the test suite to t
 There's no command line switches, or compatability plugins - it's a just a function that you can call whenever you want to
 
 It can automatically run on the browser after webpack is done rebuilding, so it's good for running tests on phones.
-```
 
 ## FAQ
 
