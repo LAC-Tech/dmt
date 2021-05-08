@@ -1,12 +1,27 @@
 <html>
 	<script type="module">
 	  import dmt from "https://unpkg.com/@lewis-campbell/dmt"
+		import {evaluateTest} from './lit.js'
 
-	  const tests = {
+		const core = {
+			'transforms correct assertion to successful test result': () => ({
+				check: evaluateTest({check: 2, equals: 2}),
+				deepEquals: {kind: 'success'}
+			}),
+			'transforms incorrect assertion to failure test result': () => ({
+				check: evaluateTest({check: 2 + 2, equals: 5}),
+				deepEquals: {kind: 'fail', actual: 4, expected: 5}
+			}),
+			'handles non-primitive equality with deep equals': () => ({
+				check: evaluateTest({
+					check: {x: 3, y: {z: 4}}, 
+					deepEquals: {x: 3, y: {z: 4}}
+				}),
+				deepEquals: {kind: 'success'}
+			})
+		}
 
-	  }
-
-	  dmt(document.body, tests)
+		dmt(document.body, {core})
 	</script>
 	<body></body>
 </html>

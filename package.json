@@ -23,6 +23,6 @@
   "scripts": {
     "build": "rollup -c",
     "watch": "tsc --watch",
-    "test": "browser-sync start --server --files *"
+    "test": "browser-sync start --server --files \"**/*\""
   }
 }

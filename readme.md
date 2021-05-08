@@ -40,9 +40,9 @@ When I began practicing TDD in Javascript, my first instinct was to
 use a popular framework like Mocha.
 
 I hated it:
-- test files use un-declared global functions
-- needs a separate binary to run tests
-- couldn't refresh the browser after bundling
+- test files used un-declared global functions
+- it needed a separate binary to run tests
+- the browser output couldn't refresh after bundling
 
 I wanted to create something that was declarative, minmalist, unobtrusive, and got the job done.
 

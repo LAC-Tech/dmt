@@ -1,24 +1,11 @@
-import resolve from '@rollup/plugin-node-resolve'
-import commonjs from '@rollup/plugin-commonjs'
-import { terser } from "rollup-plugin-terser"
-
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
 
 export default {
-	external: ['events'],
-  input: './dist/index.js',
+  input: './rollup.input.js',
   output: {
-    file: './dist/dist.js',
+    file: './rollup.output.js',
     format: 'esm'
   },
-  plugins: [
-  	resolve(),
-    commonjs(),
-    terser({
-      compress: true,
-      mangle: true,
-      output: {
-        comments: false
-      }
-    })
-  ]
+  plugins: [resolve(), commonjs()]
 }
