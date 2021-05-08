@@ -16,7 +16,18 @@ export const evaluateTest = test => {
 		} else {
 			return {kind: 'fail', actual: test.check, expected: test.deepEquals}
 		}
+	} else if ('throws' in test) {
+		try {
+			test.check()
+		} catch (err) {
+			console.log('deep equals check')
+			return evaluateTest({check: err, deepEquals: test.throws})
+		}
+
+		return {kind: 'fail', expected: test.throws}
 	}
 
 	throw 'Not implemented'
 }
+
+

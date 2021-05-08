@@ -27,7 +27,7 @@ type AssertEquals =	{check: any, equals: any}
 	Other than succeeding, a test itself can tell me two useful things: that a comparison failed, or that the test case threw an un-expected exception. 
 */
 type TestSuccess = {kind: 'success'}
-type TestFail = {kind: 'fail', actual: any, expected: any}
+type TestFail = {kind: 'fail', actual?: any, expected: any}
 type TestExn = {kind: 'exn', stacktrace: string}
 
 /*

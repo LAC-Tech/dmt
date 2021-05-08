@@ -4,21 +4,41 @@
 		import {evaluateTest} from './lit.js'
 
 		const core = {
-			'transforms correct assertion to successful test result': () => ({
-				check: evaluateTest({check: 2, equals: 2}),
-				deepEquals: {kind: 'success'}
-			}),
-			'transforms incorrect assertion to failure test result': () => ({
-				check: evaluateTest({check: 2 + 2, equals: 5}),
-				deepEquals: {kind: 'fail', actual: 4, expected: 5}
-			}),
-			'handles non-primitive equality with deep equals': () => ({
-				check: evaluateTest({
-					check: {x: 3, y: {z: 4}}, 
-					deepEquals: {x: 3, y: {z: 4}}
+			'evaluateTest': {
+				'transforms correct assertion to successful test result': () => ({
+					check: evaluateTest({check: 2, equals: 2}),
+					deepEquals: {kind: 'success'}
 				}),
-				deepEquals: {kind: 'success'}
-			})
+				'transforms incorrect assertion to failure test result': () => ({
+					check: evaluateTest({check: 2 + 2, equals: 5}),
+					deepEquals: {kind: 'fail', actual: 4, expected: 5}
+				}),
+				'handles non-primitive equality with deep equals': () => ({
+					check: evaluateTest({
+						check: {x: 2, y: {z: 4}}, 
+						deepEquals: {x: 2, y: {z: 4}}
+					}),
+					deepEquals: {kind: 'success'}
+				}),
+				'can ensure a test throws the right exception': () => ({
+					check: evaluateTest({
+						check: () => { throw {failure: 'to communicate' } },
+						throws: {failure: 'to communicate'}
+					}),
+					deepEquals: {kind: 'success'}
+				}),
+				"responds intelligently when the expected exception doesn't happen": {
+					check: evaluateTest({
+						check: () => {},
+						throws: {iAmComputer: 'feed me data'}
+					}),
+					deepEquals: {
+						kind: 'fail',
+						actual: undefined,
+						expected: {iAmComputer: 'feed me data'}
+					}
+				}
+			}
 		}
 
 		dmt(document.body, {core})

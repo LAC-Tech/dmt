@@ -4,7 +4,7 @@
 		"allowJs": true,
 		"noEmit": true,
 		"strict": true,
-		"rootDir": "src",
 		"declaration": true
-	}
+	},
+	"include": ["lit.js"]
 }
