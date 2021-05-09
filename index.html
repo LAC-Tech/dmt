@@ -1,47 +1,92 @@
+<!DOCTYPE html>
 <html>
+	<meta charset="utf-8">
+	<title>Test Suite</title>
+	<link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.15.0.css">
 	<script type="module">
-	  import dmt from "https://unpkg.com/@lewis-campbell/dmt"
 		import {evaluateTest} from './lit.js'
 
-		const core = {
-			'evaluateTest': {
-				'transforms correct assertion to successful test result': () => ({
-					check: evaluateTest({check: 2, equals: 2}),
-					deepEquals: {kind: 'success'}
-				}),
-				'transforms incorrect assertion to failure test result': () => ({
-					check: evaluateTest({check: 2 + 2, equals: 5}),
-					deepEquals: {kind: 'fail', actual: 4, expected: 5}
-				}),
-				'handles non-primitive equality with deep equals': () => ({
-					check: evaluateTest({
+		QUnit.module('core', function() {
+			QUnit.module('evaluateTest', function() {
+				QUnit.test(
+				'transforms correct assertion to successful test result', 
+				function(assert) {
+					const actual = evaluateTest({check: 2, equals: 2})
+
+					assert.deepEqual(actual, {kind: 'success'})
+				})
+
+				QUnit.test(
+				'transforms incorrect assertion to failure test result',
+					function(assert) {
+						const actual = evaluateTest({check: 2 + 2, equals: 5})
+						assert.deepEqual(actual, {kind: 'fail', actual: 4, expected: 5})
+					})
+
+				QUnit.test(
+				'handles non-primitive equality with deep equals',
+				function (assert) {
+					const actual = evaluateTest({
 						check: {x: 2, y: {z: 4}}, 
 						deepEquals: {x: 2, y: {z: 4}}
-					}),
-					deepEquals: {kind: 'success'}
-				}),
-				'can ensure a test throws the right exception': () => ({
-					check: evaluateTest({
+					})
+					assert.deepEqual(actual, {kind: 'success'})
+				})
+
+				QUnit.test(
+				'can ensure a test throws the right exception',
+				function(assert) {
+					const actual = evaluateTest({
 						check: () => { throw {failure: 'to communicate' } },
 						throws: {failure: 'to communicate'}
-					}),
-					deepEquals: {kind: 'success'}
-				}),
-				"responds intelligently when the expected exception doesn't happen": {
-					check: evaluateTest({
+					})
+					
+					assert.deepEqual(actual, {kind: 'success'})
+				})
+
+				QUnit.test(
+				'can ensure a test throws the right exception',
+				function(assert) {
+					const actual = evaluateTest({
+						check: () => { throw {failure: 'to communicate' } },
+						throws: {failure: 'to communicate'}
+					})
+
+					return assert.deepEqual(actual, {kind: 'success'})
+				})
+
+				QUnit.test(
+				"responds intelligently when the expected exception doesn't happen",
+				function(assert) {
+					const actual = evaluateTest({
 						check: () => {},
 						throws: {iAmComputer: 'feed me data'}
-					}),
-					deepEquals: {
+					})
+
+					return assert.deepEqual(actual, {
 						kind: 'fail',
 						actual: undefined,
 						expected: {iAmComputer: 'feed me data'}
-					}
-				}
-			}
-		}
+					})
+				})
 
-		dmt(document.body, {core})
+				QUnit.test(
+				'fails when the wrong error is thrown', 
+				function(assert) {
+					const actual = evaluateTest({
+						check: () => { throw 'actual' },
+						throws: 'expected'
+					})
+
+					return assert.deepEqual(
+						actual, {kind: 'fail', actual: 'actual', expected: 'expected'})
+				})
+			})
+		})
 	</script>
-	<body></body>
+	<body>
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+		<script src="https://code.jquery.com/qunit/qunit-2.15.0.js"></script>
+	</body>
 </html>

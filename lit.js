@@ -20,11 +20,10 @@ export const evaluateTest = test => {
 		try {
 			test.check()
 		} catch (err) {
-			console.log('deep equals check')
 			return evaluateTest({check: err, deepEquals: test.throws})
 		}
 
-		return {kind: 'fail', expected: test.throws}
+		return {kind: 'fail', actual: undefined, expected: test.throws}
 	}
 
 	throw 'Not implemented'
