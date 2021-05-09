@@ -6,7 +6,8 @@ declare module DMT {
 /* 
 	The core of this program is transforming a test...
 */
-type Test = AssertEquals | AssertDeepEquals | AssertThrows
+type Test = () => Assertion
+type Assertion = AssertEquals | AssertDeepEquals | AssertThrows
 
 /* 
 	...to a test result: 

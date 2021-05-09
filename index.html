@@ -11,35 +11,35 @@
 				QUnit.test(
 				'transforms correct assertion to successful test result', 
 				function(assert) {
-					const actual = evaluateTest({check: 2, equals: 2})
+					const actual = evaluateTest(() => ({check: 2, equals: 2}))
 
 					assert.deepEqual(actual, {kind: 'success'})
 				})
 
 				QUnit.test(
 				'transforms incorrect assertion to failure test result',
-					function(assert) {
-						const actual = evaluateTest({check: 2 + 2, equals: 5})
-						assert.deepEqual(actual, {kind: 'fail', actual: 4, expected: 5})
-					})
+				function(assert) {
+					const actual = evaluateTest(() => ({check: 2 + 2, equals: 5}))
+					assert.deepEqual(actual, {kind: 'fail', actual: 4, expected: 5})
+				})
 
 				QUnit.test(
 				'handles non-primitive equality with deep equals',
 				function (assert) {
-					const actual = evaluateTest({
+					const actual = evaluateTest(() => ({
 						check: {x: 2, y: {z: 4}}, 
 						deepEquals: {x: 2, y: {z: 4}}
-					})
+					}))
 					assert.deepEqual(actual, {kind: 'success'})
 				})
 
 				QUnit.test(
 				'can ensure a test throws the right exception',
 				function(assert) {
-					const actual = evaluateTest({
+					const actual = evaluateTest(() => ({
 						check: () => { throw {failure: 'to communicate' } },
 						throws: {failure: 'to communicate'}
-					})
+					}))
 					
 					assert.deepEqual(actual, {kind: 'success'})
 				})
@@ -47,10 +47,10 @@
 				QUnit.test(
 				'can ensure a test throws the right exception',
 				function(assert) {
-					const actual = evaluateTest({
+					const actual = evaluateTest(() => ({
 						check: () => { throw {failure: 'to communicate' } },
 						throws: {failure: 'to communicate'}
-					})
+					}))
 
 					return assert.deepEqual(actual, {kind: 'success'})
 				})
@@ -58,10 +58,10 @@
 				QUnit.test(
 				"responds intelligently when the expected exception doesn't happen",
 				function(assert) {
-					const actual = evaluateTest({
+					const actual = evaluateTest(() => ({
 						check: () => {},
 						throws: {iAmComputer: 'feed me data'}
-					})
+					}))
 
 					return assert.deepEqual(actual, {
 						kind: 'fail',
@@ -73,26 +73,68 @@
 				QUnit.test(
 				'fails when the wrong error is thrown', 
 				function(assert) {
-					const actual = evaluateTest({
+					const actual = evaluateTest(() => ({
 						check: () => { throw 'actual' },
 						throws: 'expected'
-					})
+					}))
 
 					return assert.deepEqual(
 						actual, {kind: 'fail', actual: 'actual', expected: 'expected'})
 				})
 			})
+		})
 
+				/*
+				QUnit.test(
+				'gracefully deals with an unexpected error',
+				function(assert) {
+					const actual = evaluateTest({
+						check:  
+					})
+
+					return assert.deepEqual()
+				})
+				*/
+
+			/*
 			QUnit.module("evaluate test suites", function() {
 				QUnit.test(
 				"handles empty suite",
 				function(assert) {
 					const actual = evaluateTestSuite({})
-
 					return assert.deepEqual(actual, {})
 				})
+
+				QUnit.test(
+				"Preserves the structure of unbalanced trees",
+				function(assert) {
+					const actual = evaluateTestSuite({
+						'two plus two': () => ({
+							check: 2 + 2,
+							equals: 5
+						}),
+						'functions gone wild': {
+							'naughty': () => ({
+								check: () => { throw 'error' },
+								throws: 'error'
+							}),
+							'nice': () => ({
+								check: () => {},
+								throws: 'error'
+							})
+						}
+					})
+
+					return assert.deepEqual({
+						'two plus two': {kind: 'fail', actual: 4, expected: 5},
+						'functions gone wild': {
+							'naughty': {kind: 'success'},
+							'nice': {kind: 'fail', actual: undefined, expected: 'error'}
+						}
+					})
+				})
 			})
-		})
+			*/
 	</script>
 	<body>
 		<div id="qunit"></div>

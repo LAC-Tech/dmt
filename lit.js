@@ -4,24 +4,25 @@ import {deepEql} from './rollup.output.js'
 
 /** @type {(test: DMT.Test) => DMT.TestResult} */
 export const evaluateTest = test => {
-	if ('equals' in test) {
-		if (test.check == test.equals)
+	const assertion = test()
+	if ('equals' in assertion) {
+		if (assertion.check == assertion.equals)
 			return {kind: 'success'}
 		else
-			return {kind: 'fail', actual: test.check, expected: test.equals}
-	} else if ('deepEquals' in test) {
-		if (deepEql(test.check, test.deepEquals))
+			return {kind: 'fail', actual: assertion.check, expected: assertion.equals}
+	} else if ('deepEquals' in assertion) {
+		if (deepEql(assertion.check, assertion.deepEquals))
 			return {kind: 'success'}
 		else
-			return {kind: 'fail', actual: test.check, expected: test.deepEquals}
-	} else if ('throws' in test) {
+			return {kind: 'fail', actual: assertion.check, expected: assertion.deepEquals}
+	} else if ('throws' in assertion) {
 		try {
-			test.check()
+			assertion.check()
 		} catch (err) {
-			return evaluateTest({check: err, deepEquals: test.throws})
+			return evaluateTest(() => ({check: err, deepEquals: assertion.throws}))
 		}
 
-		return {kind: 'fail', actual: undefined, expected: test.throws}
+		return {kind: 'fail', actual: undefined, expected: assertion.throws}
 	}
 
 	throw 'Not implemented'
