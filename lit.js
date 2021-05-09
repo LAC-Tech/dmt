@@ -5,17 +5,15 @@ import {deepEql} from './rollup.output.js'
 /** @type {(test: DMT.Test) => DMT.TestResult} */
 export const evaluateTest = test => {
 	if ('equals' in test) {
-		if (test.check == test.equals) {
+		if (test.check == test.equals)
 			return {kind: 'success'}
-		} else {
+		else
 			return {kind: 'fail', actual: test.check, expected: test.equals}
-		}
 	} else if ('deepEquals' in test) {
-		if (deepEql(test.check, test.deepEquals)) {
+		if (deepEql(test.check, test.deepEquals))
 			return {kind: 'success'}
-		} else {
+		else
 			return {kind: 'fail', actual: test.check, expected: test.deepEquals}
-		}
 	} else if ('throws' in test) {
 		try {
 			test.check()
@@ -30,3 +28,7 @@ export const evaluateTest = test => {
 }
 
 
+/** @type {(tests: DMT.Tests) => DMT.TestResults} */
+export const evaluateTestSuite = testSuite => {
+	return {}
+}
