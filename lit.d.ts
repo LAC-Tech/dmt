@@ -29,20 +29,18 @@ type AssertEquals =	{check: any, equals: any}
 */
 type TestSuccess = {kind: 'success'}
 type TestFail = {kind: 'fail', actual?: any, expected: any}
-type TestExn = {kind: 'exn', stacktrace: string}
+type TestExn = {kind: 'exn', error: string}
 
 /*
 	Of course it is useful to both group and label tests. I use a recursive tree-like structure that can be nested arbitrarily, and written using plain javascript
 */
-type Tests = Suite<() => Test>
+type Tests = Suite<Test>
 type Suite<T> = {[description: string]: T | Suite<T>}
 
 /*
 	TestResults should naturally follow the same structure. But instead of the leaf nodes being thunks, they are evaluated tests.
-
- (I've also included an 'indent' property, which spares someone rendering TestResults having to keep track of how deep they are in the tree structure)
 */
-type TestResults = Suite<TestResult & {indent: number}>
+type TestResults = Suite<TestResult>
 
 }
 /*

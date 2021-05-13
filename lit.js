@@ -4,32 +4,57 @@ import {deepEql} from './rollup.output.js'
 
 /** @type {(test: DMT.Test) => DMT.TestResult} */
 export const evaluateTest = test => {
-	const assertion = test()
-	if ('equals' in assertion) {
-		if (assertion.check == assertion.equals)
-			return {kind: 'success'}
-		else
-			return {kind: 'fail', actual: assertion.check, expected: assertion.equals}
-	} else if ('deepEquals' in assertion) {
-		if (deepEql(assertion.check, assertion.deepEquals))
-			return {kind: 'success'}
-		else
-			return {kind: 'fail', actual: assertion.check, expected: assertion.deepEquals}
-	} else if ('throws' in assertion) {
-		try {
-			assertion.check()
-		} catch (err) {
-			return evaluateTest(() => ({check: err, deepEquals: assertion.throws}))
+	try {
+		const assertion = test()
+		if ('equals' in assertion) {
+			if (assertion.check == assertion.equals)
+				return {kind: 'success'}
+			else
+				return {kind: 'fail', actual: assertion.check, expected: assertion.equals}
+		} else if ('deepEquals' in assertion) {
+			return evalDeepEquals(assertion)
+		} else if ('throws' in assertion) {
+			try {
+				assertion.check()
+			} catch (err) {
+				return evalDeepEquals({check: err, deepEquals: assertion.throws})
+			}
+
+			return {kind: 'fail', actual: undefined, expected: assertion.throws}
 		}
 
-		return {kind: 'fail', actual: undefined, expected: assertion.throws}
+		throw 'Not implemented'
+	} catch (error) {
+		return {kind: 'exn', error}
 	}
-
-	throw 'Not implemented'
 }
 
+/** @type {(assertion: DMT.AssertDeepEquals) => DMT.TestResult} */
+const evalDeepEquals = ({check, deepEquals}) => {
+	if (deepEql(check, deepEquals))
+		return {kind: 'success'}
+	else
+		return {kind: 'fail', actual: check, expected: deepEquals}
+}
 
-/** @type {(tests: DMT.Tests) => DMT.TestResults} */
+/**
+	@todo - pretty sure this will blow up for big test suites
+	recursion is not in tailcall position (assuming browsers to TCO)
+	if they do, look at SICP exercise where they show fast recursive factorial
+	else look at how to emulate recursion in Java with an explicit stack
+
+	@type {(tests: DMT.Tests) => DMT.TestResults} 
+*/
 export const evaluateTestSuite = testSuite => {
-	return {}
+	/** @type DMT.TestResults */
+	const testResults = {}
+	
+	for (const [k, v] of Object.entries(testSuite)) {
+		testResults[k] = isTest(v) ? evaluateTest(v) : evaluateTestSuite(v)
+	}
+	
+	return testResults
 }
+
+/** @type {(t: DMT.Tests | DMT.Test) => t is DMT.Test} */
+const isTest = t => typeof t === "function"

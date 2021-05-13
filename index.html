@@ -63,11 +63,13 @@
 						throws: {iAmComputer: 'feed me data'}
 					}))
 
-					return assert.deepEqual(actual, {
+					const expected = {
 						kind: 'fail',
 						actual: undefined,
 						expected: {iAmComputer: 'feed me data'}
-					})
+					}
+
+					return assert.deepEqual(actual, expected)
 				})
 
 				QUnit.test(
@@ -78,25 +80,28 @@
 						throws: 'expected'
 					}))
 
-					return assert.deepEqual(
-						actual, {kind: 'fail', actual: 'actual', expected: 'expected'})
-				})
-			})
-		})
+					const expected = {kind: 'fail', actual: 'actual', expected: 'expected'}
 
-				/*
+					return assert.deepEqual(actual, expected)
+				})
+
+				
 				QUnit.test(
 				'gracefully deals with an unexpected error',
 				function(assert) {
-					const actual = evaluateTest({
-						check:  
+					const actual = evaluateTest(() => {
+						throw 'whoops'
 					})
 
-					return assert.deepEqual()
-				})
-				*/
+					const expected = {
+						kind: 'exn',
+						error: 'whoops'
+					}
 
-			/*
+					return assert.deepEqual(actual, expected)
+				})
+			})
+			
 			QUnit.module("evaluate test suites", function() {
 				QUnit.test(
 				"handles empty suite",
@@ -125,16 +130,28 @@
 						}
 					})
 
-					return assert.deepEqual({
+					const expected = {
 						'two plus two': {kind: 'fail', actual: 4, expected: 5},
 						'functions gone wild': {
 							'naughty': {kind: 'success'},
 							'nice': {kind: 'fail', actual: undefined, expected: 'error'}
 						}
+					}
+
+					return assert.deepEqual(actual, expected)
+				})
+
+				QUnit.test(
+				'Resolves asynchronous tests',
+				function(assert) {
+					const actual = evaluateTestSuite({
+						'async': () => Promise.resolve({check: 1, equals: 1})
 					})
+
+					return assert.deepEqual(actual, {kind: 'success'})
 				})
 			})
-			*/
+		})
 	</script>
 	<body>
 		<div id="qunit"></div>
