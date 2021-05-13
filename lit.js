@@ -2,10 +2,10 @@
 ///<reference path="./lit.d.ts"/>
 import {deepEql} from './rollup.output.js'
 
-/** @type {(test: DMT.Test) => DMT.TestResult} */
-export const evaluateTest = test => {
+/** @type {(test: DMT.Test) => Promise<DMT.TestResult>} */
+export const evaluateTest = async test => {
 	try {
-		const assertion = test()
+		const assertion = await Promise.resolve(test())
 		if ('equals' in assertion) {
 			if (assertion.check == assertion.equals)
 				return {kind: 'success'}
@@ -43,14 +43,14 @@ const evalDeepEquals = ({check, deepEquals}) => {
 	if they do, look at SICP exercise where they show fast recursive factorial
 	else look at how to emulate recursion in Java with an explicit stack
 
-	@type {(tests: DMT.Tests) => DMT.TestResults} 
+	@type {(tests: DMT.Tests) => Promise<DMT.TestResults>} 
 */
-export const evaluateTestSuite = testSuite => {
+export const evaluateTestSuite = async testSuite => {
 	/** @type DMT.TestResults */
 	const testResults = {}
 	
 	for (const [k, v] of Object.entries(testSuite)) {
-		testResults[k] = isTest(v) ? evaluateTest(v) : evaluateTestSuite(v)
+		testResults[k] = await (isTest(v) ? evaluateTest(v) : evaluateTestSuite(v))
 	}
 	
 	return testResults
@@ -58,3 +58,11 @@ export const evaluateTestSuite = testSuite => {
 
 /** @type {(t: DMT.Tests | DMT.Test) => t is DMT.Test} */
 const isTest = t => typeof t === "function"
+
+/** @type {(trs: DMT.TestResults) => string} */
+const testResultsToString = trs => {
+	/** @type {string[]} */
+	const lines = []
+
+	return lines.join('\n')
+}
