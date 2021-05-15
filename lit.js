@@ -1,9 +1,9 @@
 //@ts-check
-///<reference path="./lit.d.ts"/>
+///<reference path="./dmt.d.ts"/>
 import {deepEql} from './rollup.output.js'
 
 /** @type {(test: DMT.Test) => Promise<DMT.TestResult>} */
-export const evaluateTest = async test => {
+const evaluateTest = async test => {
 	try {
 		const assertion = await Promise.resolve(test())
 		if ('equals' in assertion) {
@@ -60,9 +60,6 @@ export const evaluateTestSuite = async testSuite => {
 const isTest = t => typeof t === "function"
 
 /** @type {(trs: DMT.TestResults) => string} */
-const testResultsToString = trs => {
-	/** @type {string[]} */
-	const lines = []
-
-	return lines.join('\n')
+export const testResultsToString = trs => {
+	return JSON.stringify(trs)
 }
