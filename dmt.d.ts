@@ -12,7 +12,7 @@ type Assertion = AssertEquals | AssertDeepEquals | AssertThrows
 /* 
 	...to a test result: 
 */
-type TestResult = TestSuccess | TestFail | TestExn
+type TestResult = TestPass | TestFail
 
 /*
 	I find that one only needs to assert two things in practice: whether two objects are equal, and whether a given expression throws an exception.
@@ -27,9 +27,11 @@ type AssertEquals =	{check: any, equals: any}
 /*
 	Other than succeeding, a test itself can tell me two useful things: that a comparison failed, or that the test case threw an un-expected exception. 
 */
-type TestSuccess = {kind: 'success'}
-type TestFail = {kind: 'fail', actual?: any, expected: any}
-type TestExn = {kind: 'exn', error: string}
+type TestPass = {kind: 'pass'}
+type TestFail = {kind: 'fail', reason: TestFailReason}
+type TestFailReason = 
+	| {kind: 'not-equal', actual?: any, expected: any}
+	| {kind: 'threw-exn', error: string}
 
 /*
 	Of course it is useful to both group and label tests. I use a recursive tree-like structure that can be nested arbitrarily, and written using plain javascript

@@ -8,9 +8,9 @@ const evaluateTest = async test => {
 		const assertion = await Promise.resolve(test())
 		if ('equals' in assertion) {
 			if (assertion.check == assertion.equals)
-				return {kind: 'success'}
+				return {kind: 'pass'}
 			else
-				return {kind: 'fail', actual: assertion.check, expected: assertion.equals}
+				return notEqual(assertion.check, assertion.equals)
 		} else if ('deepEquals' in assertion) {
 			return evalDeepEquals(assertion)
 		} else if ('throws' in assertion) {
@@ -20,22 +20,32 @@ const evaluateTest = async test => {
 				return evalDeepEquals({check: err, deepEquals: assertion.throws})
 			}
 
-			return {kind: 'fail', actual: undefined, expected: assertion.throws}
+			return notEqual(undefined, assertion.throws)
 		}
 
 		throw 'Not implemented'
 	} catch (error) {
-		return {kind: 'exn', error}
+		return {kind: 'fail', reason: {kind: 'threw-exn', error}}
 	}
 }
 
 /** @type {(assertion: DMT.AssertDeepEquals) => DMT.TestResult} */
 const evalDeepEquals = ({check, deepEquals}) => {
 	if (deepEql(check, deepEquals))
-		return {kind: 'success'}
+		return {kind: 'pass'}
 	else
-		return {kind: 'fail', actual: check, expected: deepEquals}
+		return notEqual(check, deepEquals)
 }
+
+/** @type {(actual: unknown, expected: unknown) => DMT.TestFail} */
+const notEqual = (actual, expected) => ({
+	kind: 'fail',
+	reason: {
+		kind: 'not-equal',
+		actual,
+		expected
+	}
+})
 
 /**
 	@todo - pretty sure this will blow up for big test suites
@@ -58,8 +68,3 @@ export const evaluateTestSuite = async testSuite => {
 
 /** @type {(t: DMT.Tests | DMT.Test) => t is DMT.Test} */
 const isTest = t => typeof t === "function"
-
-/** @type {(trs: DMT.TestResults) => string} */
-export const testResultsToString = trs => {
-	return JSON.stringify(trs)
-}

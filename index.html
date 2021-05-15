@@ -15,7 +15,7 @@
 						'': () => ({check: 2, equals: 2})
 					})
 
-					assert.deepEqual(actual, {'': {kind: 'success'}})
+					assert.deepEqual(actual, {'': {kind: 'pass'}})
 				})
 
 				QUnit.test(
@@ -24,7 +24,19 @@
 					const actual = await evaluateTestSuite({
 						'': () => ({check: 2 + 2, equals: 5})
 					})
-					assert.deepEqual(actual, {'': {kind: 'fail', actual: 4, expected: 5}})
+
+					const expected = {
+						'': {
+							kind: 'fail', 
+							reason: {
+								kind: 'not-equal',
+								actual: 4,
+								expected: 5
+							}
+						}
+					}
+					
+					assert.deepEqual(actual, expected)
 				})
 
 				QUnit.test(
@@ -36,7 +48,7 @@
 							deepEquals: {x: 2, y: {z: 4}}
 						})
 					})
-					assert.deepEqual(actual, {'': {kind: 'success'}})
+					assert.deepEqual(actual, {'': {kind: 'pass'}})
 				})
 
 				QUnit.test(
@@ -49,20 +61,7 @@
 						})
 					})
 					
-					assert.deepEqual(actual, {'': {kind: 'success'}})
-				})
-
-				QUnit.test(
-				'can ensure a test throws the right exception',
-				async function(assert) {
-					const actual = await evaluateTestSuite({
-						'': () => ({
-							check: () => { throw {failure: 'to communicate' } },
-							throws: {failure: 'to communicate'}
-						})
-					})
-					
-					return assert.deepEqual(actual, {'': {kind: 'success'}})
+					assert.deepEqual(actual, {'': {kind: 'pass'}})
 				})
 
 				QUnit.test(
@@ -78,8 +77,11 @@
 					const expected = {
 						'': {
 							kind: 'fail',
-							actual: undefined,
-							expected: {iAmComputer: 'feed me data'}
+							reason: {
+								kind: 'not-equal',
+								actual: undefined,
+								expected: {iAmComputer: 'feed me data'}
+							}
 						}
 					}
 
@@ -97,7 +99,14 @@
 					})
 
 					const expected = {
-						'': {kind: 'fail', actual: 'actual', expected: 'expected'}
+						'': {
+							kind: 'fail',
+							reason: {
+								kind: 'not-equal',
+								actual: 'actual', 
+								expected: 'expected'
+							}
+						}
 					}
 
 					return assert.deepEqual(actual, expected)
@@ -114,8 +123,11 @@
 
 					const expected = {
 						'': {
-							kind: 'exn',
-							error: 'whoops'
+							kind: 'fail',
+							reason: {
+								kind: 'threw-exn',
+								error: 'whoops'
+							}
 						}
 					}
 
@@ -152,13 +164,27 @@
 					})
 
 					const expected = {
-						'two plus two': {kind: 'fail', actual: 4, expected: 5},
+						'two plus two': {
+							kind: 'fail',
+							reason: {
+								kind: 'not-equal',
+								actual: 4,
+								expected: 5
+							}
+						},
 						'functions gone wild': {
-							'naughty': {kind: 'success'},
-							'nice': {kind: 'fail', actual: undefined, expected: 'error'}
+							'naughty': {kind: 'pass'},
+							'nice': {
+								kind: 'fail', 
+								reason: {
+									kind: 'not-equal',
+									actual: undefined, 
+									expected: 'error'
+								}
+							}
 						}
 					}
-
+					
 					return assert.deepEqual(actual, expected)
 				})
 
@@ -169,7 +195,7 @@
 						'myAsyncFunction': () => Promise.resolve({check: 1, equals: 1})
 					})
 
-					const expected = {'myAsyncFunction': {kind: 'success'}}
+					const expected = {'myAsyncFunction': {kind: 'pass'}}
 
 					return assert.deepEqual(actual, expected)
 				})
@@ -184,7 +210,7 @@
 										check: await evaluateTestSuite({
 										'': () => ({check: 2, equals: 2})
 										}),
-										deepEquals: {'': {kind: 'success'}}
+										deepEquals: {'': {kind: 'pass'}}
 								})
 							}
 						}
@@ -194,7 +220,7 @@
 						'core': {
 							'evaluate a single test': {
 								'transforms correct assertion to successful test result': {
-									kind: 'success'
+									kind: 'pass'
 								}
 							}
 						}
