@@ -64,14 +64,15 @@ export const evalTestSuite = async testSuite => {
 		} else {
 			/** @type DMT.TestResults */
 			const trs = await evalTestSuite(v)
+			/** @type {Array<[number, number]>} */
 			const counts = Object.values(trs).map(t => {
 				if ('kind' in t)
-					return (t.kind == 'pass') ? {passes: 1, fails: 0} : {passes: 0, fails: 1}
+					return (t.kind == 'pass') ? [1, 0] : [0, 1]
 				else
-					return t
+					return [t.passes, t.fails]
 			})
 
-			const {passes, fails} = sumCounts(counts)
+			const [passes, fails] = sumCounts(counts)
 			testResults[k] = {passes, fails, children: trs}
 		}
 	}
@@ -79,11 +80,11 @@ export const evalTestSuite = async testSuite => {
 	return testResults
 }
 
-/** @param {Array<{passes: number, fails: number}>} cs */
-const sumCounts = cs => cs.reduce((x, y) => ({
-	passes: x.passes + y.passes,
-	fails: x.fails + y.fails
-}), {passes: 0, fails: 0})
+/** @param {Array<[number, number]>} cs */
+const sumCounts = cs => cs.reduce((x, y) => ([
+	x[0] + y[0],
+	x[1] + y[1],
+]), [0, 0])
 
 /** @type {(t: DMT.TestSuite | DMT.Test) => t is DMT.Test} */
 const isTest = t => typeof t === "function"
