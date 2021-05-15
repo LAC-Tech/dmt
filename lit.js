@@ -3,7 +3,7 @@
 import {deepEql} from './rollup.output.js'
 
 /** @type {(test: DMT.Test) => Promise<DMT.TestResult>} */
-const evaluateTest = async test => {
+const evalTest = async test => {
 	try {
 		const assertion = await Promise.resolve(test())
 		if ('equals' in assertion) {
@@ -48,23 +48,42 @@ const notEqual = (actual, expected) => ({
 })
 
 /**
-	@todo - pretty sure this will blow up for big test suites
-	recursion is not in tailcall position (assuming browsers to TCO)
-	if they do, look at SICP exercise where they show fast recursive factorial
-	else look at how to emulate recursion in Java with an explicit stack
+	Tree-recursion is fine for trees that are never going to be that big.
 
-	@type {(tests: DMT.Tests) => Promise<DMT.TestResults>} 
+	If it really gets too much, consider evluating using a stack
+	
+	@type {(tests: DMT.TestSuite) => Promise<DMT.TestResults>} 
 */
-export const evaluateTestSuite = async testSuite => {
+export const evalTestSuite = async testSuite => {
 	/** @type DMT.TestResults */
 	const testResults = {}
 	
 	for (const [k, v] of Object.entries(testSuite)) {
-		testResults[k] = await (isTest(v) ? evaluateTest(v) : evaluateTestSuite(v))
+		if (isTest(v)) {
+			testResults[k] = await evalTest(v)
+		} else {
+			/** @type DMT.TestResults */
+			const trs = await evalTestSuite(v)
+			const counts = Object.values(trs).map(t => {
+				if ('kind' in t)
+					return (t.kind == 'pass') ? {passes: 1, fails: 0} : {passes: 0, fails: 1}
+				else
+					return t
+			})
+
+			const {passes, fails} = sumCounts(counts)
+			testResults[k] = {passes, fails, children: trs}
+		}
 	}
 	
 	return testResults
 }
 
-/** @type {(t: DMT.Tests | DMT.Test) => t is DMT.Test} */
+/** @param {Array<{passes: number, fails: number}>} cs */
+const sumCounts = cs => cs.reduce((x, y) => ({
+	passes: x.passes + y.passes,
+	fails: x.fails + y.fails
+}), {passes: 0, fails: 0})
+
+/** @type {(t: DMT.TestSuite | DMT.Test) => t is DMT.Test} */
 const isTest = t => typeof t === "function"

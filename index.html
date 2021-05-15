@@ -4,24 +4,28 @@
 	<title>Test Suite</title>
 	<link rel="stylesheet" href="qunit-2.15.0.css">
 	<script type="module">
-		import {evaluateTestSuite} from './lit.js'
+		import {evalTestSuite} from './lit.js'
 
 		QUnit.module('core', function() {
-			QUnit.module('evaluate a single test', function() {
+			QUnit.module('eval a single test', function() {
 				QUnit.test(
 				'transforms correct assertion to successful test result', 
 				async function(assert) {
-					const actual = await evaluateTestSuite({
+					const actual = await evalTestSuite({
 						'': () => ({check: 2, equals: 2})
 					})
 
-					assert.deepEqual(actual, {'': {kind: 'pass'}})
+					const expected = {
+						'': {kind: 'pass'}
+					}
+
+					assert.deepEqual(actual, expected)
 				})
 
 				QUnit.test(
 				'transforms incorrect assertion to failure test result',
 				async function(assert) {
-					const actual = await evaluateTestSuite({
+					const actual = await evalTestSuite({
 						'': () => ({check: 2 + 2, equals: 5})
 					})
 
@@ -42,32 +46,41 @@
 				QUnit.test(
 				'handles non-primitive equality with deep equals',
 				async function (assert) {
-					const actual = await evaluateTestSuite({
+					const actual = await evalTestSuite({
 						'': () => ({
 							check: {x: 2, y: {z: 4}},
 							deepEquals: {x: 2, y: {z: 4}}
 						})
 					})
-					assert.deepEqual(actual, {'': {kind: 'pass'}})
+
+					const expected = {
+						'': {kind: 'pass'}
+					}
+
+					assert.deepEqual(actual, expected)
 				})
 
 				QUnit.test(
 				'can ensure a test throws the right exception',
 				async function(assert) {
-					const actual = await evaluateTestSuite({
+					const actual = await evalTestSuite({
 						'': () => ({
 							check: () => { throw {failure: 'to communicate' } },
 							throws: {failure: 'to communicate'}
 						})
 					})
+
+					const expected =  {
+						'': {kind: 'pass'}
+					}
 					
-					assert.deepEqual(actual, {'': {kind: 'pass'}})
+					assert.deepEqual(actual, expected)
 				})
 
 				QUnit.test(
 				"responds intelligently when the expected exception doesn't happen",
 				async function(assert) {
-					const actual = await evaluateTestSuite({
+					const actual = await evalTestSuite({
 						'': () => ({
 							check: () => {},
 							throws: {iAmComputer: 'feed me data'}
@@ -91,7 +104,7 @@
 				QUnit.test(
 				'fails when the wrong error is thrown', 
 				async function(assert) {
-					const actual = await evaluateTestSuite({
+					const actual = await evalTestSuite({
 						'': () => ({
 							check: () => { throw 'actual' },
 							throws: 'expected'
@@ -115,7 +128,7 @@
 				QUnit.test(
 				'gracefully deals with an unexpected error',
 				async function(assert) {
-					const actual = await evaluateTestSuite({
+					const actual = await evalTestSuite({
 						'': () => {
 							throw 'whoops'
 						}
@@ -135,18 +148,18 @@
 				})
 			})
 			
-			QUnit.module("evaluate test suites", function() {
+			QUnit.module("eval test suites", function() {
 				QUnit.test(
 				"handles empty suite",
 				async function(assert) {
-					const actual = await evaluateTestSuite({})
+					const actual = await evalTestSuite({})
 					return assert.deepEqual(actual, {})
 				})
 
 				QUnit.test(
 				"Preserves the structure of unbalanced trees",
 				async function(assert) {
-					const actual = await evaluateTestSuite({
+					const actual = await evalTestSuite({
 						'two plus two': () => ({
 							check: 2 + 2,
 							equals: 5
@@ -173,13 +186,17 @@
 							}
 						},
 						'functions gone wild': {
-							'naughty': {kind: 'pass'},
-							'nice': {
-								kind: 'fail', 
-								reason: {
-									kind: 'not-equal',
-									actual: undefined, 
-									expected: 'error'
+							passes: 1,
+							fails: 1,
+							children: {
+								'naughty': {kind: 'pass'},
+								'nice': {
+									kind: 'fail', 
+									reason: {
+										kind: 'not-equal',
+										actual: undefined, 
+										expected: 'error'
+									}
 								}
 							}
 						}
@@ -191,42 +208,15 @@
 				QUnit.test(
 				'Resolves asynchronous tests',
 				async function(assert) {
-					const actual = await evaluateTestSuite({
+					const actual = await evalTestSuite({
 						'myAsyncFunction': () => Promise.resolve({check: 1, equals: 1})
 					})
-
-					const expected = {'myAsyncFunction': {kind: 'pass'}}
-
-					return assert.deepEqual(actual, expected)
-				})
-
-				QUnit.test(
-				'meta-test 1',
-				async function(assert) {
-					const actual = await evaluateTestSuite({
-						'core': {
-							'evaluate a single test': {
-								'transforms correct assertion to successful test result': async () => ({ 
-										check: await evaluateTestSuite({
-										'': () => ({check: 2, equals: 2})
-										}),
-										deepEquals: {'': {kind: 'pass'}}
-								})
-							}
-						}
-					})
-
+					
 					const expected = {
-						'core': {
-							'evaluate a single test': {
-								'transforms correct assertion to successful test result': {
-									kind: 'pass'
-								}
-							}
-						}
+						'myAsyncFunction': {kind: 'pass'}
 					}
 
-					return assert.deepEqual(actual, expected)						
+					return assert.deepEqual(actual, expected)
 				})
 			})
 		})

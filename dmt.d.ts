@@ -36,17 +36,23 @@ type TestFailReason =
 /*
 	Of course it is useful to both group and label tests. I use a recursive tree-like structure that can be nested arbitrarily, and written using plain javascript
 */
-type Tests = Suite<Test>
-type Suite<T> = {[description: string]: T | Suite<T>}
+type TestSuite = {[description: string]: Test | TestSuite}
 
 /*
 	TestResults should naturally follow the same structure. But instead of the leaf nodes being thunks, they are evaluated tests.
 */
-type TestResults = Suite<TestResult>
 
+type TestResults = {
+	[description: string]: TestResult | {
+		passes: number,
+		fails: number,
+		children: TestResults
+	}
 }
+
 /*
 	And so - finally - we come to root type for this whole module: a function that takes 'Tests' and transfroms them to 'TestResults' 
 */
 
-type DMT = (t: DMT.Tests) => DMT.TestResults
+}
+//type DMT = (ts: DMT.TestSuite) => DMT.TestResults
