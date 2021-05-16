@@ -16,7 +16,11 @@
 					})
 
 					const expected = {
-						'': {kind: 'pass'}
+						passes: 1,
+						fails: 0,
+						children: {
+							'': {kind: 'pass'}
+						}
 					}
 
 					assert.deepEqual(actual, expected)
@@ -30,12 +34,16 @@
 					})
 
 					const expected = {
-						'': {
-							kind: 'fail', 
-							reason: {
-								kind: 'not-equal',
-								actual: 4,
-								expected: 5
+						passes: 0,
+						fails: 1,
+						children: {
+							'': {
+								kind: 'fail', 
+								reason: {
+									kind: 'not-equal',
+									actual: 4,
+									expected: 5
+								}
 							}
 						}
 					}
@@ -54,7 +62,11 @@
 					})
 
 					const expected = {
-						'': {kind: 'pass'}
+						passes: 1,
+						fails: 0,
+						children: {
+							'': {kind: 'pass'}
+						}
 					}
 
 					assert.deepEqual(actual, expected)
@@ -71,7 +83,11 @@
 					})
 
 					const expected =  {
-						'': {kind: 'pass'}
+						passes: 1,
+						fails: 0,
+						children: {
+							'': {kind: 'pass'}
+						}
 					}
 					
 					assert.deepEqual(actual, expected)
@@ -88,12 +104,16 @@
 					})
 
 					const expected = {
-						'': {
-							kind: 'fail',
-							reason: {
-								kind: 'not-equal',
-								actual: undefined,
-								expected: {iAmComputer: 'feed me data'}
+						passes: 0,
+						fails: 1,
+						children: {
+							'': {
+								kind: 'fail',
+								reason: {
+									kind: 'not-equal',
+									actual: undefined,
+									expected: {iAmComputer: 'feed me data'}
+								}
 							}
 						}
 					}
@@ -112,12 +132,16 @@
 					})
 
 					const expected = {
-						'': {
-							kind: 'fail',
-							reason: {
-								kind: 'not-equal',
-								actual: 'actual', 
-								expected: 'expected'
+						passes: 0,
+						fails: 1,
+						children: {
+							'': {
+								kind: 'fail',
+								reason: {
+									kind: 'not-equal',
+									actual: 'actual', 
+									expected: 'expected'
+								}
 							}
 						}
 					}
@@ -135,11 +159,15 @@
 					})
 
 					const expected = {
-						'': {
-							kind: 'fail',
-							reason: {
-								kind: 'threw-exn',
-								error: 'whoops'
+						passes: 0,
+						fails: 1,
+						children: {
+							'': {
+								kind: 'fail',
+								reason: {
+									kind: 'threw-exn',
+									error: 'whoops'
+								}
 							}
 						}
 					}
@@ -153,7 +181,8 @@
 				"handles empty suite",
 				async function(assert) {
 					const actual = await evalTestSuite({})
-					return assert.deepEqual(actual, {})
+					const expected = {passes: 0, fails: 0, children: {}}
+					return assert.deepEqual(actual, expected)
 				})
 
 				QUnit.test(
@@ -177,25 +206,29 @@
 					})
 
 					const expected = {
-						'two plus two': {
-							kind: 'fail',
-							reason: {
-								kind: 'not-equal',
-								actual: 4,
-								expected: 5
-							}
-						},
-						'functions gone wild': {
-							passes: 1,
-							fails: 1,
-							children: {
-								'naughty': {kind: 'pass'},
-								'nice': {
-									kind: 'fail', 
-									reason: {
-										kind: 'not-equal',
-										actual: undefined, 
-										expected: 'error'
+						passes: 1,
+						fails: 2,
+						children: {
+							'two plus two': {
+								kind: 'fail',
+								reason: {
+									kind: 'not-equal',
+									actual: 4,
+									expected: 5
+								}
+							},
+							'functions gone wild': {
+								passes: 1,
+								fails: 1,
+								children: {
+									'naughty': {kind: 'pass'},
+									'nice': {
+										kind: 'fail', 
+										reason: {
+											kind: 'not-equal',
+											actual: undefined, 
+											expected: 'error'
+										}
 									}
 								}
 							}
@@ -213,7 +246,11 @@
 					})
 					
 					const expected = {
-						'myAsyncFunction': {kind: 'pass'}
+						passes: 1,
+						fails: 0,
+						children: {
+							'myAsyncFunction': {kind: 'pass'}
+						}
 					}
 
 					return assert.deepEqual(actual, expected)

@@ -56,28 +56,36 @@ const notEqual = (actual, expected) => ({
 */
 export const evalTestSuite = async testSuite => {
 	/** @type DMT.TestResults */
-	const testResults = {}
+	const testResults = {passes: 0, fails: 0, children: {}}
 	
 	for (const [description, t] of Object.entries(testSuite)) {
 		if (isTest(t)) {
-			testResults[description] = await evalTest(t)
+			const tr = await evalTest(t)
+			const [passes, fails] = sumTestResult(tr)
+			testResults.passes += passes
+			testResults.fails += fails
+			testResults.children[description] = tr
 		} else {
 			/** @type DMT.TestResults */
 			const trs = await evalTestSuite(t)
-			const [passes, fails] = sumTestResults(trs)
-			testResults[description] = {passes, fails, children: trs}
+			const [passes, fails] = sumTestResults(trs.children)
+			testResults.passes += passes
+			testResults.fails += fails
+			testResults.children[description] = trs
 		}
 	}
 	
 	return testResults
 }
 
-/** @param {DMT.TestResults} trs */
+/** @param {DMT.TestResults['children']} trs */
 const sumTestResults = trs => Object.values(trs).reduce(([passes, fails], t) => {
-	const [p, f] = 
-		'kind' in t ? (t.kind == 'pass' ? [1, 0] : [0, 1]) : [t.passes, t.fails]
+	const [p, f] = 'kind' in t ? sumTestResult(t) : [t.passes, t.fails]
 	return [passes + p, fails + f]
 }, [0, 0])
+
+/** @param {DMT.TestResult} tr */
+const sumTestResult = tr => tr.kind == 'pass' ? [1, 0] : [0, 1]
 
 /** @type {(t: DMT.TestSuite | DMT.Test) => t is DMT.Test} */
 const isTest = t => typeof t === "function"

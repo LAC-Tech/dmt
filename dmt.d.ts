@@ -43,10 +43,10 @@ type TestSuite = {[description: string]: Test | TestSuite}
 */
 
 type TestResults = {
-	[description: string]: TestResult | {
-		passes: number,
-		fails: number,
-		children: TestResults
+	passes: number
+	fails: number
+	children: {
+		[description: string]: TestResult | TestResults
 	}
 }
 
