@@ -1,6 +1,8 @@
 //@ts-check
 ///<reference path="./dmt.d.ts"/>
-import {deepEql} from './rollup.output.js'
+import {deepEql} from '../rollup.output.js'
+
+export {evalTestSuite}
 
 /** @type {(test: DMT.Test) => Promise<DMT.TestResult>} */
 const evalTest = async test => {
@@ -23,7 +25,8 @@ const evalTest = async test => {
 			return notEqual(undefined, assertion.throws)
 		}
 
-		throw 'Not implemented'
+		const keys = Object.keys(assertion)
+		throw `Unable to evaluate assertion with fields ${keys}`
 	} catch (error) {
 		return {kind: 'fail', reason: {kind: 'threw-exn', error}}
 	}
@@ -54,7 +57,7 @@ const notEqual = (actual, expected) => ({
 	
 	@type {(tests: DMT.TestSuite) => Promise<DMT.TestResults>} 
 */
-export const evalTestSuite = async testSuite => {
+const evalTestSuite = async testSuite => {
 	/** @type DMT.TestResults */
 	const testResults = {passes: 0, fails: 0, children: {}}
 	
@@ -66,7 +69,6 @@ export const evalTestSuite = async testSuite => {
 			testResults.fails += fails
 			testResults.children[description] = tr
 		} else {
-			/** @type DMT.TestResults */
 			const trs = await evalTestSuite(t)
 			const [passes, fails] = sumTestResults(trs.children)
 			testResults.passes += passes
@@ -89,3 +91,5 @@ const sumTestResult = tr => tr.kind == 'pass' ? [1, 0] : [0, 1]
 
 /** @type {(t: DMT.TestSuite | DMT.Test) => t is DMT.Test} */
 const isTest = t => typeof t === "function"
+
+//const isTestResult = t 

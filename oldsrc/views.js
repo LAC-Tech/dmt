@@ -13,8 +13,8 @@ const successResult = description => testOutput([success('✓'), description])
 */
 const failResult = (description, stacktrace) => ([
 	[fail('✖'), description],
-	[`stacktrace: ${stacktrace}`]
-].map(testOutput))
+	[`stacktrace: {stacktrace}`]
+].map(testOutput)$)
 
 /** @param {string} text */
 const success = text => html`<span class="success">${text}</span>`

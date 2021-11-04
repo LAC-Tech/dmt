@@ -6,5 +6,5 @@
 		"strict": true,
 		"declaration": true
 	},
-	"include": ["lit.js"]
+	"include": ["src/"]
 }

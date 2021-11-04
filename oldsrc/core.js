@@ -32,7 +32,7 @@ const equalFromPredicate = predicate => (actual, expected) => {
 }
 
 const deepEqual = equalFromPredicate(deepEql)
-const equal = equalFromPredicate((a, b) => a === b
+const equal = equalFromPredicate((a, b) => a === b)
 /**
 	@param {() => any} checkThunk
 	@param {any} expectedExn
@@ -70,7 +70,7 @@ const evaluateTest = async test => {
 const evaluateSuite = async suite => mapTestSuite(suite, evaluateTest)
 
 /** 
-	@param {Suite<Test>} suite
+	@param {DMT.Suite<Test>} suite
 	@param {typeof evaluateTest} e
 	@return {Promise<Suite<TestResult>>}
 */
