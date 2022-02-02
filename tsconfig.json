@@ -4,7 +4,7 @@
 		"allowJs": true,
 		"noEmit": true,
 		"strict": true,
-		"declaration": true
+		"declaration": true,
 	},
 	"include": ["src/"]
 }

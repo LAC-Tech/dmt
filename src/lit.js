@@ -1,6 +1,6 @@
 //@ts-check
 ///<reference path="./dmt.d.ts"/>
-import {deepEql} from '../rollup.output.js'
+import {deepEql} from '../esbuild.output.js'
 
 export {evalTestSuite}
 
@@ -27,7 +27,8 @@ const evalTest = async test => {
 
 		const keys = Object.keys(assertion)
 		throw `Unable to evaluate assertion with fields ${keys}`
-	} catch (error) {
+	} catch (exn) {
+		const error = typeof exn === 'string' ? exn : JSON.stringify(exn)
 		return {kind: 'fail', reason: {kind: 'threw-exn', error}}
 	}
 }

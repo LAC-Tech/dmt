@@ -9,7 +9,7 @@ const e = tagName => attributes => {
 	return result
 }
 
-const [span, div] = [e('span'), e('div')]
+const [span, div] = ['span', 'div'].map(e)
 
 /** @param {string} innerText */
 const success = innerText => span({innerText, className: 'success'})
