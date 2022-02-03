@@ -74,31 +74,12 @@
 	<body>
 		<script type="module">
 			import {evalTestSuite} from './src/lit.js'
-			import {renderTestResults} from './src/browser.js'
+			import {testResultsToElem} from './src/browser.js'
+      import tests from "/tests"
 
-			evalTestSuite({
-				'core': {
-					'eval a single test': {
-						'transforms correct assertion to successful test result': async () => {
-							const actual = await evalTestSuite({
-								'': () => ({check: 2, equals: 2})
-							})
-
-							const expected = {
-								passes: 1,
-								fails:  0,
-								children: {
-									'': {kind: 'pass'}
-								}
-							}
-
-							return {check: actual, deepEquals: expected}
-						}
-					}
-				}
-			}).then(testResults => {
-				document.body.appendChild(renderTestResults(testResults))
-			})
+			evalTestSuite(tests)
+        .then(testResultsToElem)
+        .then(elem => document.body.appendChild(elem))
 		</script>
 	</body>
 </html>

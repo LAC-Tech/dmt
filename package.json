@@ -6,9 +6,9 @@
   "types": "./dist/index.d.ts",
   "type": "module",
   "dependencies": {
-    "deep-eql": "^4.0.0",
     "diff": "^5.0.0",
-    "lit-html": "^2.0.2"
+    "lit-html": "^2.0.2",
+    "rambda": "^7.0.1"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^11.0.2",

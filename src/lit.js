@@ -1,6 +1,6 @@
 //@ts-check
 ///<reference path="./dmt.d.ts"/>
-import {deepEql} from '../esbuild.output.js'
+import {equals} from "rambda"
 
 export {evalTestSuite}
 
@@ -35,7 +35,7 @@ const evalTest = async test => {
 
 /** @type {(assertion: DMT.AssertDeepEquals) => DMT.TestResult} */
 const evalDeepEquals = ({check, deepEquals}) => {
-	if (deepEql(check, deepEquals))
+	if (equals(check, deepEquals))
 		return {kind: 'pass'}
 	else
 		return notEqual(check, deepEquals)

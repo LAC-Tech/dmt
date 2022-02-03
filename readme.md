@@ -48,6 +48,12 @@ I wanted to create something that was declarative, minmalist, unobtrusive, and g
 
 ## Features
 
+### The Test Suite doesn't depend on the library
+
+One thing you might notice about the example test suite - it doesn't depend on any imports from DMT at all! This is by design.
+
+Test suites are just a javascript object of a certain shape. This means your usual tooling will work (ie, typechecking) and you're free to generate and compose test suites in whatever way you seem fit.
+
 ### Declarative
 
 DMT doesn't have global functions like `describe`, `beforeEach`, `afterEach` etc. In fact DMT only has one function - and it runs your tests. The tests themselves are simply trees represented by javascript objects, where the keys are descriptions and the leaf values are es6 arrow functions that return an assertion. This means that test files *do not need to reference this library*.

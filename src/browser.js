@@ -18,10 +18,7 @@ const success = innerText => span({innerText, className: 'success'})
 const fail = innerText => span({innerText, className: 'fail'})
 
 /** @type {(tr: DMT.TestResults) => HTMLElement} */
-export const renderTestResults = ({passes, fails, children}) => {
-	if (fails > 0)
-		return fail(JSON.stringify(children))
-	else
-		return success(JSON.stringify(children))
-
+export const testResultsToElem = ({passes, fails, children}) => {
+	const s = JSON.stringify(children)
+	return (fails > 0 ? fail : success)(s)
 }
