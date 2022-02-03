@@ -7,7 +7,7 @@ export {node, testResult, root}
 const successResult = (description: string) =>
 	testOutput([success('✓'), description])
 
-const failResult = (description: string, error: Error) => ([
+const failResult = (description: string, error: unknown) => ([
 	[fail('✖'), description],
 	[`error: '${error}'`]
 ].map(testOutput))

@@ -54,15 +54,15 @@ exports["default"] = (function (elem, testSuite) { return __awaiter(void 0, void
     var suite, _a, views, count, fails;
     return __generator(this, function (_b) {
         switch (_b.label) {
-            case 0: return [4 /*yield*/, core_1.evaluateSuite(testSuite)];
+            case 0: return [4 /*yield*/, (0, core_1.evaluateSuite)(testSuite)];
             case 1:
                 suite = _b.sent();
-                return [4 /*yield*/, render(name, suite, 0)];
+                return [4 /*yield*/, render('', suite, 0)];
             case 2:
                 _a = _b.sent(), views = _a.views, count = _a.count;
                 fails = count.fails;
-                document.title = "tests " + (fails == 0 ? '✓' : "\u2716" + fails);
-                lit_html_1.render(view.root(views), elem);
+                document.title = "tests ".concat(fails == 0 ? '✓' : "\u2716".concat(fails));
+                (0, lit_html_1.render)(view.root(views), elem);
                 return [2 /*return*/];
         }
     });
@@ -72,7 +72,7 @@ var render = function (name, suite, indent) { return __awaiter(void 0, void 0, v
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                if (core_1.isTestResult(suite)) {
+                if ((0, core_1.isTestResult)(suite)) {
                     success = suite.kind === 'success';
                     count_1 = success ? { passes: 1, fails: 0 } : { passes: 0, fails: 1 };
                     return [2 /*return*/, { count: count_1, views: view.testResult(name, suite) }];
@@ -95,9 +95,9 @@ var render = function (name, suite, indent) { return __awaiter(void 0, void 0, v
             case 1:
                 children = _a.sent();
                 views = children.flatMap(function (n) {
-                    return core_1.isTestResult(n.suite) ? view.testResult(n.name, n.suite) : view.node(n);
+                    return (0, core_1.isTestResult)(n.suite) ? view.testResult(n.name, n.suite) : view.node(n);
                 });
-                count = core_1.sumCounts(children.map(function (c) { return c.count; }));
+                count = (0, core_1.sumCounts)(children.map(function (c) { return c.count; }));
                 return [2 /*return*/, { views: views, count: count }];
         }
     });

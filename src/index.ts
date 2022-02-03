@@ -5,7 +5,7 @@ import * as view from './views'
 
 export default async (elem: HTMLElement, testSuite: Suite<Test>) => {
 	const suite = await evaluateSuite(testSuite)
-	const {views, count} = await render(name, suite, 0)
+	const {views, count} = await render('', suite, 0)
 
 	const {fails} = count
 	document.title = `tests ${fails == 0 ? '✓': `✖${fails}`}`

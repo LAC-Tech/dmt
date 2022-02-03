@@ -23,7 +23,7 @@ export declare type TestResult = {
     expected: any;
 } | {
     kind: 'exn';
-    error: Error;
+    error: unknown;
 };
 export declare type Suite<T> = {
     readonly [key: string]: Suite<T> | T;
