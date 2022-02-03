@@ -1,12 +1,7 @@
-import {TemplateResult} from 'lit-html'
-
 /*
 	TODO these names are shit. Get them right, and things might start making more
 	sense
 */
-
-// Just in case I change view library
-export type HtmlTemplate = TemplateResult
 
 export interface Count {passes: number, fails: number}
 
