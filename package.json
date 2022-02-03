@@ -7,22 +7,16 @@
   "type": "module",
   "dependencies": {
     "diff": "^5.0.0",
-    "lit-html": "^2.0.2",
     "rambda": "^7.0.1"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^11.0.2",
-    "@rollup/plugin-node-resolve": "^7.1.1",
     "@types/diff": "^5.0.1",
     "@types/node": "^16.11.10",
-    "http-server": "^14.0.0",
-    "rollup": "^2.60.1",
-    "rollup-plugin-terser": "^7.0.2",
-    "typescript": "^4.5.2"
+    "parcel": "^2.2.1",
+    "typescript": "^4.5.5"
   },
   "scripts": {
-    "build": "rollup -c",
     "watch": "tsc --watch",
-    "test": "browser-sync start --server --files \"**/*\""
+    "test": "parcel index.html"
   }
 }
