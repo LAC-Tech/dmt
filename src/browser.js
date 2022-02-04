@@ -1,5 +1,7 @@
 //@ts-check
 
+///<reference path="./index.d.ts"/>
+
 /**
  * @template {keyof HTMLElementTagNameMap} K
  * @param {K} tagName
@@ -24,12 +26,12 @@ const success = innerText => h('span', {innerText, className: 'success'})
 /** @param {string} innerText */
 const fail = innerText => h('span', {innerText, className: 'fail'})
 
-/** @type {(type: 'success' | 'fail', str: string, n: number) => Node | String */
-const text = (type, str, n) => {
+/** @type {(type: 'success' | 'fail', s: string, n: number) => Node | String }*/
+const text = (type, s, n) => {
 	if (n == 0) return ""
 
 	return h('span', {className: type}, [
-		str,
+		s,
 		h('small', {}, h('sub', {}, n.toString()))
 	])
 }
@@ -56,25 +58,35 @@ const testFail = ({reason}) => {
 }
 
 /** @type {(descr: string, tr: DMT.TestResult) => string | Node} */
-const testResultToElem = (descr, tr) => {
+const testResult = (descr, tr) => {
 	switch (tr.kind) {
 		case 'pass': return success(descr)
 		case 'fail': return testFail(tr)
 	}
 }
 
-/** @type {(name: string, trs: DMT.TestResults) => HTMLElement} */
-export const testResultsToElem = (name, {fails, passes, children}) => {
+/** @type {(name: string) => (trs: DMT.TestResults) => HTMLElement} */
+const testResults = name => ({fails, passes, children}) => {
+	/** @type {Array<string | Node>} */
+	const childElements = Object.entries(children).map(([k, v]) => {
+			if ('kind' in v) {
+				return testResult(k, v)
+			} else {
+				return testResults(k)(v)
+			}
+		})
+
+
 	const elem = h('details', {open: fails != 0}, [
 		h('summary', {}, [
-			h('b', {}, name)
-
-		])
+			h('b', {}, name),
+			text('success', '✓', passes),
+			text('fail', '✖', fails)
+		]),
+		...childElements
 	])
 
-
-	let d = document.createElement
-
+	
 
 	/*
 		<details ?open=${fails != 0}>
@@ -87,6 +99,8 @@ export const testResultsToElem = (name, {fails, passes, children}) => {
 		</details>`
 	*/
 
-	const s = JSON.stringify(children)
-	return (fails > 0 ? fail : success)(s)
+	return elem
+
 }
+
+export default testResults('')

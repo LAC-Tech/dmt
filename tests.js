@@ -23,6 +23,8 @@ export default {
 		}
 	},
 
+	/*
+
 	'transforms incorrect assertion to failure test result': async () => {
 		const actual = await evalTestSuite({
 			'': () => ({check: 2 + 2, equals: 5})
@@ -232,4 +234,5 @@ export default {
 
 		return {check: actual, deepEquals: expected}
 	}
+	*/
 }

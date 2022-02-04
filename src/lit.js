@@ -1,5 +1,5 @@
 //@ts-check
-///<reference path="./dmt.d.ts"/>
+///<reference path="./index.d.ts"/>
 import { diffJson } from "diff"
 import {equals} from "rambda"
 

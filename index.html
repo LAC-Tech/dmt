@@ -4,34 +4,6 @@
 		<meta charset="utf-8">
 		<title>Test Suite</title>
 		<style>
-			.h1 {
-				margin-left: 0em;	
-			}
-
-			.h2 {
-				margin-left: 0.5em;
-			}
-
-			.h3 {
-				margin-left: 1em;
-			}
-
-			.h4 {
-				margin-left: 1.5em;
-			}
-
-			.h5 {
-				margin-left: 2em
-			}
-
-			.h6 {
-				margin-left: 2.5em;
-			}
-
-			.h7 {
-				margin-left: 3em;
-			}
-
 			html {
 				color: whitesmoke;
 				background: #000007;
@@ -73,13 +45,10 @@
 	</head>
 	<body>
 		<script type="module">
-			import {evalTestSuite} from './src/lit.js'
-			import {testResultsToElem} from './src/browser.js'
-      import tests from "/tests"
+  		import tests from "/tests"
+  		import dmt from './src'
 
-			evalTestSuite(tests)
-        .then(testResultsToElem)
-        .then(elem => document.body.appendChild(elem))
+			dmt(document.body, tests)
 		</script>
 	</body>
 </html>
