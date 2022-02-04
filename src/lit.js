@@ -1,5 +1,6 @@
 //@ts-check
 ///<reference path="./dmt.d.ts"/>
+import { diffJson } from "diff"
 import {equals} from "rambda"
 
 export {evalTestSuite}
@@ -41,13 +42,12 @@ const evalDeepEquals = ({check, deepEquals}) => {
 		return notEqual(check, deepEquals)
 }
 
-/** @type {(actual: unknown, expected: unknown) => DMT.TestFail} */
+/** @type {(actual: any, expected: any) => DMT.TestFail} */
 const notEqual = (actual, expected) => ({
 	kind: 'fail',
 	reason: {
 		kind: 'not-equal',
-		actual,
-		expected
+		changes: diffJson(actual, expected)
 	}
 })
 
