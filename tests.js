@@ -12,7 +12,7 @@ export default {
 
 				const expected = {
 					passes: 1,
-					fails:  0,
+					fails: 0,
 					children: {
 						'': {kind: 'pass'}
 					}
@@ -22,8 +22,6 @@ export default {
 			}
 		}
 	},
-
-	/*
 
 	'transforms incorrect assertion to failure test result': async () => {
 		const actual = await evalTestSuite({
@@ -48,6 +46,7 @@ export default {
 		return {check: actual, deepEquals: expected}
 	},
 
+	/*
 	'handles non-primitive equality with deep equals': async () => {
 		const actual = await evalTestSuite({
 			'': () => ({

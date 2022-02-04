@@ -48,7 +48,7 @@ const testFail = ({reason}) => {
 
 			return h('div', {className: 'result'}, [
 				h('pre', {}, fail('✖')),
-				h('pre', {className: 'diff'}, fail('✖'))
+				h('pre', {className: 'diff'}, diffLines)
 			])
 		}
 		case 'threw-exn': {
@@ -57,7 +57,7 @@ const testFail = ({reason}) => {
 	}
 }
 
-/** @type {(descr: string, tr: DMT.TestResult) => string | Node} */
+/** @type {(descr: string, tr: DMT.TestResult) => Node} */
 const testResult = (descr, tr) => {
 	switch (tr.kind) {
 		case 'pass': return success(descr)
@@ -65,17 +65,25 @@ const testResult = (descr, tr) => {
 	}
 }
 
-/** @type {(name: string) => (trs: DMT.TestResults) => HTMLElement} */
-const testResults = name => ({fails, passes, children}) => {
+/** @type {(descr: string, v: DMT.TestResult | DMT.TestResults) => Node} */
+const testResultsChild = (descr, v) => {
+	if ('kind' in v) {
+			return testResult(descr, v)
+		} else {
+			return testResults(descr, v)
+		}
+} 
+
+/** @type {(descr: string, trs: DMT.TestResults) => HTMLElement} */
+const testResults = (name, {fails, passes, children}) => {
 	/** @type {Array<string | Node>} */
 	const childElements = Object.entries(children).map(([k, v]) => {
-			if ('kind' in v) {
-				return testResult(k, v)
-			} else {
-				return testResults(k)(v)
-			}
-		})
-
+		if ('kind' in v) {
+			return testResult(k, v)
+		} else {
+			return testResults(k, v)
+		}
+	})
 
 	const elem = h('details', {open: fails != 0}, [
 		h('summary', {}, [
@@ -86,21 +94,19 @@ const testResults = name => ({fails, passes, children}) => {
 		...childElements
 	])
 
-	
-
-	/*
-		<details ?open=${fails != 0}>
-			<summary class=${`h${indent}`}>
-				<b>${name}</b>
-				${text('success', '✓', passes)}
-				${text('fail', '✖', fails)}
-			</summary>
-			${templates}
-		</details>`
-	*/
-
 	return elem
 
 }
 
-export default testResults('')
+/** @param {DMT.TestResults} trs */
+export default ({fails, passes, children}) => {
+	const testSummary = fails == 0 ? '✓': `✖${fails}`
+	document.title = `tests ${testSummary}`
+
+	const result = document.createDocumentFragment()
+
+	for (const [k, v] of Object.entries(children))
+		result.appendChild(testResultsChild(k, v))
+
+	return result
+}
