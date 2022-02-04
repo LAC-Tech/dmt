@@ -47,7 +47,11 @@ const notEqual = (actual, expected) => ({
 	kind: 'fail',
 	reason: {
 		kind: 'not-equal',
-		changes: diffJson(actual, expected)
+		changes: diffJson(actual, expected).map(({added, removed, value}) => {
+			if (added) return {kind: 'added', value}
+			if (removed) return {kind: 'removed', value}
+			else return {kind: 'unchanged', value}
+		})
 	}
 })
 

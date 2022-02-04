@@ -10,8 +10,12 @@
 				font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 			}
 
+			/* ensures nested test results are indented */
+			details, .success, .fail {
+				padding-left: 0.5em;
+			}
+
 			details summary {
-				font-size: smaller;
 				letter-spacing: 0.075em;
 			}
 
@@ -22,31 +26,32 @@
 			}
 
 			.success {	
-				color: #5fff5f;
+				color: #3fff3f;
 			}
 
 			.fail {
-				color: #ff5f5f;
+				color: #ff3f3f;
 			}
 
 			.diff {
-				font-size: smaller;
+				font-size: small;
 			}
 
 			.result {
-				font-family: monospace;
-				margin-left: 2em;
+				padding-top: 2px;
 			}
 
 			pre {
+				font-family: monospace;
 				margin: 0;
+				padding-left: 1em;
 			}
 		</style>
 	</head>
 	<body>
 		<script type="module">
-  		import tests from "/tests"
-  		import dmt from './src'
+			import tests from "/tests"
+			import dmt from './src'
 
 			dmt(document.body, tests)
 		</script>

@@ -2,6 +2,19 @@
 
 ///<reference path="./index.d.ts"/>
 
+/** @param {DMT.TestResults} trs */
+export default ({fails, passes, children}) => {
+	const testSummary = fails == 0 ? '✓': `✖${fails}`
+	document.title = `dmt ${testSummary}`
+
+	const result = document.createDocumentFragment()
+
+	for (const [k, v] of Object.entries(children))
+		result.appendChild(testResultsChild(k, v))
+
+	return result
+}
+
 /**
  * @template {keyof HTMLElementTagNameMap} K
  * @param {K} tagName
@@ -36,18 +49,20 @@ const text = (type, s, n) => {
 	])
 }
 
-/** @param {DMT.TestFail} tf */
-const testFail = ({reason}) => {
+/** @type {(descr: string, tf: DMT.TestFail) => HTMLSpanElement} */
+const testFail = (descr, {reason}) => {
 	switch (reason.kind) {
 		case 'not-equal': {
-			const diffLines = reason.changes.map(({added, removed, value}) => {
-				if (added) return success(value)
-				if (removed) return fail(value)
-				else return value
+			const diffLines = reason.changes.map(({kind, value}) => {
+				switch (kind) {
+					case 'added': return success(value)
+					case 'removed': return fail(value)
+					default: return value
+				}
 			})
 
 			return h('div', {className: 'result'}, [
-				h('pre', {}, fail('✖')),
+				fail(descr),
 				h('pre', {className: 'diff'}, diffLines)
 			])
 		}
@@ -57,56 +72,33 @@ const testFail = ({reason}) => {
 	}
 }
 
-/** @type {(descr: string, tr: DMT.TestResult) => Node} */
-const testResult = (descr, tr) => {
+/** @param {string} descr */
+const testPass = descr => h('div', {className: 'result'}, success(descr))
+
+/** @type {(tr: DMT.TestResult) => (descr: string) => Node} */
+const testResult = tr => descr => {
 	switch (tr.kind) {
-		case 'pass': return success(descr)
-		case 'fail': return testFail(tr)
+		case 'pass': return testPass(descr)
+		case 'fail': return testFail(descr, tr)
 	}
 }
 
 /** @type {(descr: string, v: DMT.TestResult | DMT.TestResults) => Node} */
-const testResultsChild = (descr, v) => {
-	if ('kind' in v) {
-			return testResult(descr, v)
-		} else {
-			return testResults(descr, v)
-		}
-} 
+const testResultsChild = (descr, v) => 
+	('kind' in v ? testResult(v) : testResults(v))(descr)
 
-/** @type {(descr: string, trs: DMT.TestResults) => HTMLElement} */
-const testResults = (name, {fails, passes, children}) => {
-	/** @type {Array<string | Node>} */
-	const childElements = Object.entries(children).map(([k, v]) => {
-		if ('kind' in v) {
-			return testResult(k, v)
-		} else {
-			return testResults(k, v)
-		}
-	})
+/** @type {(trs: DMT.TestResults) => (descr: string) => HTMLElement} */
+const testResults = ({fails, passes, children}) => descr => {
+	const childElements = Object
+		.entries(children)
+		.map(child => testResultsChild(...child))
 
-	const elem = h('details', {open: fails != 0}, [
+	return h('details', {open: fails != 0}, [
 		h('summary', {}, [
-			h('b', {}, name),
+			h('b', {}, descr),
 			text('success', '✓', passes),
 			text('fail', '✖', fails)
 		]),
 		...childElements
 	])
-
-	return elem
-
-}
-
-/** @param {DMT.TestResults} trs */
-export default ({fails, passes, children}) => {
-	const testSummary = fails == 0 ? '✓': `✖${fails}`
-	document.title = `tests ${testSummary}`
-
-	const result = document.createDocumentFragment()
-
-	for (const [k, v] of Object.entries(children))
-		result.appendChild(testResultsChild(k, v))
-
-	return result
 }

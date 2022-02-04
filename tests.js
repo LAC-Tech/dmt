@@ -19,34 +19,35 @@ export default {
 				}
 
 				return {check: actual, deepEquals: expected}
-			}
-		}
-	},
+			},
+			'transforms incorrect assertion to failure test result': async () => {
+				const actual = await evalTestSuite({
+					'': () => ({check: 2 + 2, equals: 5})
+				})
 
-	'transforms incorrect assertion to failure test result': async () => {
-		const actual = await evalTestSuite({
-			'': () => ({check: 2 + 2, equals: 5})
-		})
-
-		const expected = {
-			passes: 0,
-			fails: 1,
-			children: {
-				'': {
-					kind: 'fail', 
-					reason: {
-						kind: 'not-equal',
-						actual: 4,
-						expected: 5
+				const expected = {
+					passes: 0,
+					fails: 1,
+					children: {
+						'': {
+							kind: 'fail', 
+							reason: {
+								kind: 'not-equal',
+								actual: 4,
+								expected: 5
+							}
+						}
 					}
 				}
+				
+				return {check: actual, deepEquals: expected}
 			}
 		}
-		
-		return {check: actual, deepEquals: expected}
 	},
 
 	/*
+,
+
 	'handles non-primitive equality with deep equals': async () => {
 		const actual = await evalTestSuite({
 			'': () => ({

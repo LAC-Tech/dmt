@@ -2,9 +2,7 @@
 	DMT - Declarative Minimalist Testing
 
 */
-import type * as Diff from 'diff'
 export as namespace DMT;
-
 
 /* 
 	The core of this program is transforming a test...
@@ -33,8 +31,11 @@ type AssertEquals =	{check: any, equals: any}
 type TestPass = {kind: 'pass'}
 type TestFail = {kind: 'fail', reason: TestFailReason}
 type TestFailReason = 
-	| {kind: 'not-equal', changes: Diff.Change[]}
+	| {kind: 'not-equal', changes: ReadonlyArray<Change>}
 	| {kind: 'threw-exn', error: string}
+
+/* Used for rendering diffs of changed objects. Based on the output of diff library but customised for my own use + to prevent coupling*/
+type Change = {kind: 'added' | 'removed' | 'unchanged', value: any}
 
 /*
 	Of course it is useful to both group and label tests. I use a recursive tree-like structure that can be nested arbitrarily, and written using plain javascript
@@ -44,7 +45,6 @@ export type TestSuite = {[description: string]: Test | TestSuite}
 /*
 	TestResults should naturally follow the same structure. But instead of the leaf nodes being thunks, they are evaluated tests.
 */
-
 export type TestResults = {
 	passes: number
 	fails: number
