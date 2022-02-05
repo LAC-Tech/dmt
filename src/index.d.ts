@@ -35,7 +35,7 @@ type TestFailReason =
 	| {kind: 'threw-exn', error: string}
 
 /* Used for rendering diffs of changed objects. Based on the output of diff library but customised for my own use + to prevent coupling*/
-type Change = {kind: 'added' | 'removed' | 'unchanged', value: any}
+type Change = {kind: 'actual' | 'expected' | 'same', value: string}
 
 /*
 	Of course it is useful to both group and label tests. I use a recursive tree-like structure that can be nested arbitrarily, and written using plain javascript

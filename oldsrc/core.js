@@ -24,7 +24,7 @@ const isTestResult = t => {
 
 /**
 	@param {(a: any, b: any) => boolean} predicate
-	@return {(actual: any, expected: any) => TestResult}
+	@return {(actual: any, expected: any) => DMT.TestResult}
 */
 const equalFromPredicate = predicate => (actual, expected) => {
 	if (!predicate(actual, expected)) return {kind: 'fail',	actual,	expected}

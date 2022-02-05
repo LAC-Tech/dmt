@@ -20,27 +20,53 @@ export default {
 
 				return {check: actual, deepEquals: expected}
 			},
-			'transforms incorrect assertion to failure test result': async () => {
-				const actual = await evalTestSuite({
-					'': () => ({check: 2 + 2, equals: 5})
-				})
+			'incorrect assertions': {
+				'primitives': async () => {
+					const actual = await evalTestSuite({
+						'': () => ({check: 2 + 2, equals: 5})
+					})
 
-				const expected = {
-					passes: 0,
-					fails: 1,
-					children: {
-						'': {
-							kind: 'fail', 
-							reason: {
-								kind: 'not-equal',
-								actual: 4,
-								expected: 5
+					const expected = {
+						passes: 0,
+						fails: 1,
+						children: {
+							'': {
+								kind: 'fail',
+								reason: {
+									kind: 'not-equal',
+									changes: [
+										{kind: 'actual', value: "4"},
+										{kind: 'expected', value: "5"}
+									]
+								}
 							}
 						}
 					}
+					
+					return {check: actual, deepEquals: expected}
+				},
+
+				'LOL': async () => {
+					const actual = await evalTestSuite({
+						'': () => ({check: 3, equals: undefined})
+					})
+
+					const expected = {
+						passes: 0,
+						fails: 1, 
+						children: {
+							'': {
+								kind: 'fail',
+								reason: [
+									{kind: 'added', value: 'null'},
+									{kind: 'removed'}
+								]
+							}
+						}
+					}
+
+					return {check: actual, deepEquals: expected}
 				}
-				
-				return {check: actual, deepEquals: expected}
 			}
 		}
 	},

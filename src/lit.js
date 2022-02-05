@@ -10,7 +10,7 @@ const evalTest = async test => {
 	try {
 		const assertion = await Promise.resolve(test())
 		if ('equals' in assertion) {
-			if (assertion.check == assertion.equals)
+			if (assertion.check === assertion.equals)
 				return {kind: 'pass'}
 			else
 				return notEqual(assertion.check, assertion.equals)
@@ -29,8 +29,7 @@ const evalTest = async test => {
 		const keys = Object.keys(assertion)
 		throw `Unable to evaluate assertion with fields ${keys}`
 	} catch (exn) {
-		const error = typeof exn === 'string' ? exn : JSON.stringify(exn)
-		return {kind: 'fail', reason: {kind: 'threw-exn', error}}
+		return {kind: 'fail', reason: {kind: 'threw-exn', error: `${exn}`}}
 	}
 }
 
@@ -48,9 +47,9 @@ const notEqual = (actual, expected) => ({
 	reason: {
 		kind: 'not-equal',
 		changes: diffJson(actual, expected).map(({added, removed, value}) => {
-			if (added) return {kind: 'added', value}
-			if (removed) return {kind: 'removed', value}
-			else return {kind: 'unchanged', value}
+			if (removed) return {kind: 'actual', value}
+			if (added) return {kind: 'expected', value}
+			else return {kind: 'same', value}
 		})
 	}
 })

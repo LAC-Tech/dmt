@@ -55,9 +55,9 @@ const testFail = (descr, {reason}) => {
 		case 'not-equal': {
 			const diffLines = reason.changes.map(({kind, value}) => {
 				switch (kind) {
-					case 'added': return success(value)
-					case 'removed': return fail(value)
-					default: return value
+					case 'expected': return fail(value)
+					case 'actual': return success(value)
+					case 'same': return value
 				}
 			})
 
