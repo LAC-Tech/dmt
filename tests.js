@@ -21,7 +21,7 @@ export default {
 				return {check: actual, deepEquals: expected}
 			},
 			'incorrect assertions': {
-				'primitives': async () => {
+				"two primitives don't equal each other": async () => {
 					const actual = await evalTestSuite({
 						'': () => ({check: 2 + 2, equals: 5})
 					})
@@ -46,7 +46,7 @@ export default {
 					return {check: actual, deepEquals: expected}
 				},
 
-				'LOL': async () => {
+				"handle undefined edge case": async () => {
 					const actual = await evalTestSuite({
 						'': () => ({check: 3, equals: undefined})
 					})
@@ -57,10 +57,13 @@ export default {
 						children: {
 							'': {
 								kind: 'fail',
-								reason: [
-									{kind: 'added', value: 'null'},
-									{kind: 'removed'}
-								]
+								reason: {
+									kind: 'not-equal',
+									changes: [
+										{kind: 'actual', value: 3},
+										{kind: 'expected', value: undefined}
+									]
+								}
 							}
 						}
 					}
@@ -70,9 +73,6 @@ export default {
 			}
 		}
 	},
-
-	/*
-,
 
 	'handles non-primitive equality with deep equals': async () => {
 		const actual = await evalTestSuite({
@@ -112,6 +112,7 @@ export default {
 		return {check: actual, deepEquals: expected}
 	},
 
+
 	"responds intelligently when the expected exception doesn't happen": async () => {
 		const actual = await evalTestSuite({
 			'': () => ({
@@ -128,8 +129,10 @@ export default {
 					kind: 'fail',
 					reason: {
 						kind: 'not-equal',
-						actual: undefined,
-						expected: {iAmComputer: 'feed me data'}
+						changes: [
+							{kind: 'actual', value: undefined},
+							{kind: 'expected', value: {iAmComputer: 'feed me data'}}
+						]
 					}
 				}
 			}
@@ -154,8 +157,10 @@ export default {
 					kind: 'fail',
 					reason: {
 						kind: 'not-equal',
-						actual: 'actual', 
-						expected: 'expected'
+						changes: [
+							{kind: 'actual', value: 'actual'},
+							{kind: 'expected', value: 'expected'}
+						]
 					}
 				}
 			}
@@ -220,8 +225,10 @@ export default {
 					kind: 'fail',
 					reason: {
 						kind: 'not-equal',
-						actual: 4,
-						expected: 5
+						changes: [
+							{kind: 'actual', value: "4"},
+							{kind: 'expected', value: "5"}
+						]
 					}
 				},
 				'functions gone wild': {
@@ -233,8 +240,10 @@ export default {
 							kind: 'fail', 
 							reason: {
 								kind: 'not-equal',
-								actual: undefined, 
-								expected: 'error'
+								changes: [
+									{kind: 'actual', value: undefined},
+									{kind: 'expected', value: 'error'}
+								]
 							}
 						}
 					}
@@ -260,5 +269,4 @@ export default {
 
 		return {check: actual, deepEquals: expected}
 	}
-	*/
 }

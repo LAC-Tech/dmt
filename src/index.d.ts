@@ -4,6 +4,8 @@
 */
 export as namespace DMT;
 
+export {TestResult, Change, TestSuite, TestResults, TestFail, AssertDeepEquals}
+
 /* 
 	The core of this program is transforming a test...
 */
@@ -13,7 +15,7 @@ type Assertion = AssertEquals | AssertDeepEquals | AssertThrows
 /* 
 	...to a test result: 
 */
-export type TestResult = TestPass | TestFail
+type TestResult = TestPass | TestFail
 
 /*
 	I find that one only needs to assert two things in practice: whether two objects are equal, and whether a given expression throws an exception.
@@ -40,12 +42,12 @@ type Change = {kind: 'actual' | 'expected' | 'same', value: string}
 /*
 	Of course it is useful to both group and label tests. I use a recursive tree-like structure that can be nested arbitrarily, and written using plain javascript
 */
-export type TestSuite = {[description: string]: Test | TestSuite}
+type TestSuite = {[description: string]: Test | TestSuite}
 
 /*
 	TestResults should naturally follow the same structure. But instead of the leaf nodes being thunks, they are evaluated tests.
 */
-export type TestResults = {
+type TestResults = {
 	passes: number
 	fails: number
 	children: {

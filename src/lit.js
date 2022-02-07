@@ -41,18 +41,29 @@ const evalDeepEquals = ({check, deepEquals}) => {
 		return notEqual(check, deepEquals)
 }
 
+
 /** @type {(actual: any, expected: any) => DMT.TestFail} */
-const notEqual = (actual, expected) => ({
-	kind: 'fail',
-	reason: {
-		kind: 'not-equal',
-		changes: diffJson(actual, expected).map(({added, removed, value}) => {
-			if (removed) return {kind: 'actual', value}
-			if (added) return {kind: 'expected', value}
-			else return {kind: 'same', value}
-		})
-	}
-})
+const notEqual = (actual, expected) => {
+	/** @type {DMT.Change[]} */
+	const changes = (() => {
+		if (actual === undefined && expected === undefined) {
+			return []
+		} else if (actual === undefined || expected === undefined) {
+			return [
+				{kind: 'actual', value: actual}, 
+				{kind: 'expected', value: expected}
+			]
+		} else { 
+			return diffJson(actual, expected).map(({added, removed, value}) => {
+				if (removed) return {kind: 'actual', value}
+				if (added) return {kind: 'expected', value}
+				else return {kind: 'same', value}
+			})
+		}
+	})()
+
+	return {kind: 'fail', reason: {kind: 'not-equal', changes}}
+}
 
 /**
 	Tree-recursion is fine for trees that are never going to be that big.
