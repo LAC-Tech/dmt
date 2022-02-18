@@ -4,7 +4,7 @@
 */
 export as namespace DMT;
 
-export {TestResult, Change, TestSuite, TestResults, TestFail, AssertDeepEquals}
+export {TestResult, Change, TestSuite, TestResults, TestFail, AssertDeepEquals, Test}
 
 /* 
 	The core of this program is transforming a test...
