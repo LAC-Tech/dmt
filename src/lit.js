@@ -34,13 +34,8 @@ const evalTest = async test => {
 }
 
 /** @type {(assertion: DMT.AssertDeepEquals) => DMT.TestResult} */
-const evalDeepEquals = ({check, deepEquals}) => {
-	if (equals(check, deepEquals))
-		return {kind: 'pass'}
-	else
-		return notEqual(check, deepEquals)
-}
-
+const evalDeepEquals = ({check: actual, deepEquals: expected}) => 
+	equals(actual, expected) ? {kind: 'pass'} : notEqual(actual, expected)
 
 /** @type {(actual: any, expected: any) => DMT.TestFail} */
 const notEqual = (actual, expected) => {
@@ -106,5 +101,3 @@ const sumTestResult = tr => tr.kind == 'pass' ? [1, 0] : [0, 1]
 
 /** @type {(t: DMT.TestSuite | DMT.Test) => t is DMT.Test} */
 const isTest = t => typeof t === "function"
-
-//const isTestResult = t 
