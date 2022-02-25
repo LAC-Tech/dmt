@@ -3,8 +3,7 @@
 		"lib": ["dom", "es2019"],
 		"allowJs": true,
 		"noEmit": true,
-		"strict": true,
-		"declaration": true,
+		"strict": true
 	},
 	"include": ["src/", "tests.js"]
 }

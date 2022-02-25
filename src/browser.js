@@ -1,7 +1,5 @@
 //@ts-check
 
-///<reference path="./index.d.ts"/>
-
 /** @param {DMT.TestResults} trs */
 export default ({fails, passes, children}) => {
 	const testSummary = fails == 0 ? '✓': `✖${fails}`
