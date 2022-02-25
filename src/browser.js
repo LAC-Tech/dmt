@@ -49,6 +49,10 @@ const text = (type, s, n) => {
 	])
 }
 
+/** @type {(descr: string, suffix: HTMLSpanElement) => HTMLSpanElement}*/
+const description = (descr, suffix) => 
+	h('span', {className: 'description'}, [descr, suffix])
+
 /** @type {(descr: string, tf: DMT.TestFail) => HTMLSpanElement} */
 const testFail = (descr, {reason}) => {
 	switch (reason.kind) {
@@ -62,7 +66,7 @@ const testFail = (descr, {reason}) => {
 			})
 
 			return h('div', {className: 'result'}, [
-				fail(descr),
+				description(descr, fail('✖')),
 				h('pre', {className: 'diff'}, diffLines)
 			])
 		}
@@ -73,7 +77,9 @@ const testFail = (descr, {reason}) => {
 }
 
 /** @param {string} descr */
-const testPass = descr => h('div', {className: 'result'}, success(descr))
+const testPass = descr => 
+	h('div', {className: 'result'}, 
+		h('span', {}, description(descr, success('✓'))))
 
 /** @type {(tr: DMT.TestResult) => (descr: string) => Node} */
 const testResult = tr => descr => {

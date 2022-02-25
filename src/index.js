@@ -1,7 +1,7 @@
 // @ts-check
 
-import render from './browser.js' 
-import { evalTestSuite} from './lit'
+import render from './browser' 
+import { evalTestSuite} from './core'
 
 /** 
  * @param {HTMLElement} elem

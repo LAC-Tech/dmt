@@ -1,6 +1,6 @@
 //@ts-check
 
-import {evalTestSuite} from "./src/lit"
+import {evalTestSuite} from "./src/core"
 
 export default {
 	'core': {
@@ -260,7 +260,7 @@ export default {
 		})
 					
 		const expected = {
-			passes: 1,
+			passes: 0,
 			fails: 0,
 			children: {
 				'myAsyncFunction': {kind: 'pass'}
