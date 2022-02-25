@@ -260,7 +260,7 @@ export default {
 		})
 					
 		const expected = {
-			passes: 0,
+			passes: 1,
 			fails: 0,
 			children: {
 				'myAsyncFunction': {kind: 'pass'}
