@@ -6,6 +6,58 @@ export default ({fails, passes, children}) => {
 	document.title = `dmt ${testSummary}`
 
 	const result = document.createDocumentFragment()
+	const style = document.createElement('style');
+	style.textContent = `
+			html {
+				color: whitesmoke;
+				background: #000007;
+				font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+			}
+
+			/* ensures nested test results are indented */
+			details, .description, .success, .fail {
+				padding-left: 0.5em;
+			}
+
+			.description {
+				font-style: italic;
+			}
+
+			details summary {
+				letter-spacing: 0.075em;
+			}
+
+			@media (min-width:960px) {
+				html {
+					font-size: x-large;
+				}
+			}
+
+			.success {	
+				color: #3fff3f;
+			}
+
+			.fail {
+				color: #ff3f3f;
+			}
+
+			.diff {
+				font-size: small;
+			}
+
+			.result {
+				padding-top: 2px;
+			}
+
+			pre {
+				font-family: monospace;
+				margin: 0;
+				padding-left: 1em;
+			}
+	`
+
+	result.append(style)
+
 
 	for (const [k, v] of Object.entries(children))
 		result.appendChild(testResultsChild(k, v))
