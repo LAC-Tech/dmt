@@ -2,7 +2,7 @@
   "name": "@lewis-campbell/dmt",
   "version": "1.2.0",
   "description": "A declarative, minimalist testing library for the browser",
-  "main": "dist/dist.js",
+  "main": "dist.js",
   "types": "src/types.d.ts",
   "type": "module",
   "dependencies": {
@@ -21,6 +21,6 @@
   "scripts": {
     "check": "tsc --watch",
     "test": "parcel test/index.html",
-    "build": "esbuild  src/index.js --bundle --outfile=dist/dist.js"
+    "build": "esbuild  src/index.js --bundle --outfile=dist.js"
   }
 }
