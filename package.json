@@ -20,7 +20,7 @@
   },
   "scripts": {
     "check": "tsc --watch",
-    "test": "parcel index.html",
+    "test": "parcel test/index.html",
     "build": "esbuild  src/index.js --bundle --outfile=dist/dist.js"
   }
 }

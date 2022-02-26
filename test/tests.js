@@ -1,6 +1,6 @@
 //@ts-check
 
-import {evalTestSuite} from "./src/core"
+import {evalTestSuite} from "../src"
 
 export default {
 	'core': {
