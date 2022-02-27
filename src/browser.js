@@ -89,6 +89,12 @@ const success = innerText => h('span', {innerText, className: 'success'})
 /** @param {string} innerText */
 const fail = innerText => h('span', {innerText, className: 'fail'})
 
+/**
+ * @param {string | Node | Array<string | Node>} children
+ * @return {HTMLSpanElement}
+ */
+const result = (children = []) => h('div', {className: 'result'}, children)
+
 /** @type {(type: 'success' | 'fail', s: string, n: number) => Node | String }*/
 const text = (type, s, n) => {
 	if (n == 0) return ""
@@ -115,21 +121,23 @@ const testFail = (descr, {reason}) => {
 				}
 			})
 
-			return h('div', {className: 'result'}, [
+			return result([
 				description(descr, fail('✖')),
 				h('pre', {className: 'diff'}, diffLines)
 			])
 		}
-		case 'threw-exn': {
-			return fail(reason.error)
+		case 'threw-exn': {		
+			return result([
+				description(descr, fail('✖')),
+				h('pre', {}, fail(reason.error))
+			])
 		}
 	}
 }
 
 /** @param {string} descr */
 const testPass = descr => 
-	h('div', {className: 'result'}, 
-		h('span', {}, description(descr, success('✓'))))
+	result(h('span', {}, description(descr, success('✓'))))
 
 /** @type {(tr: DMT.TestResult) => (descr: string) => Node} */
 const testResult = tr => descr => {

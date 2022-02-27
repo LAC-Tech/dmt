@@ -268,5 +268,9 @@ export default {
 		}
 
 		return {check: actual, deepEquals: expected}
-	}
+	},
+
+	"description of error throwing": () => {
+		throw new Error('lol')
+	} 
 }
