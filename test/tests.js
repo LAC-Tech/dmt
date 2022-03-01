@@ -2,12 +2,13 @@
 
 import {evalTestSuite} from "../src"
 
+/** @type {DMT.TestSuite} */
 export default {
 	'core': {
 		'eval a single test': {
 			'transforms correct assertion to successful test result': async () => {
 				const actual = await evalTestSuite({
-					'': () => ({check: 2, equals: 2})
+					'': () => ({actual: 2, expected: 2})
 				})
 
 				const expected = {
@@ -18,12 +19,12 @@ export default {
 					}
 				}
 
-				return {check: actual, deepEquals: expected}
+				return {actual, expected}
 			},
 			'incorrect assertions': {
 				"two primitives don't equal each other": async () => {
 					const actual = await evalTestSuite({
-						'': () => ({check: 2 + 2, equals: 5})
+						'': () => ({actual: 2 + 2, expected: 5})
 					})
 
 					const expected = {
@@ -43,12 +44,12 @@ export default {
 						}
 					}
 					
-					return {check: actual, deepEquals: expected}
+					return {actual, expected}
 				},
 
 				"handle undefined edge case": async () => {
 					const actual = await evalTestSuite({
-						'': () => ({check: 3, equals: undefined})
+						'': () => ({actual: 3, expected: undefined})
 					})
 
 					const expected = {
@@ -68,7 +69,7 @@ export default {
 						}
 					}
 
-					return {check: actual, deepEquals: expected}
+					return {actual, expected}
 				}
 			}
 		}
@@ -77,8 +78,8 @@ export default {
 	'handles non-primitive equality with deep equals': async () => {
 		const actual = await evalTestSuite({
 			'': () => ({
-				check: {x: 2, y: {z: 4}},
-				deepEquals: {x: 2, y: {z: 4}}
+				actual: {x: 2, y: {z: 4}},
+				expected: {x: 2, y: {z: 4}}
 			})
 		})
 
@@ -90,13 +91,13 @@ export default {
 			}
 		}
 
-		return {check: actual, deepEquals: expected}
+		return {actual, expected}
 	},
 
 	'can ensure a test throws the right exception': async () => {
 		const actual = await evalTestSuite({
 			'': () => ({
-				check: () => { throw {failure: 'to communicate' } },
+				assert: () => { throw {failure: 'to communicate' } },
 				throws: {failure: 'to communicate'}
 			})
 		})
@@ -109,14 +110,14 @@ export default {
 			}
 		}
 		
-		return {check: actual, deepEquals: expected}
+		return {actual, expected}
 	},
 
 
 	"responds intelligently when the expected exception doesn't happen": async () => {
 		const actual = await evalTestSuite({
 			'': () => ({
-				check: () => {},
+				assert: () => {},
 				throws: {iAmComputer: 'feed me data'}
 			})
 		})
@@ -138,13 +139,13 @@ export default {
 			}
 		}
 
-		return {check: actual, deepEquals: expected}
+		return {actual, expected}
 	},
 
 	'fails when the wrong error is thrown': async () => { 
 		const actual = await evalTestSuite({
 			'': () => ({
-				check: () => { throw 'actual' },
+				assert: () => { throw 'actual' },
 				throws: 'expected'
 			})
 		})
@@ -166,7 +167,7 @@ export default {
 			}
 		}
 
-		return {check: actual, deepEquals: expected}
+		return {actual, expected}
 	},
 	
 	'gracefully deals with an unexpected error': async () => {
@@ -190,28 +191,27 @@ export default {
 			}
 		}
 
-		return {check: actual, deepEquals: expected}
+		return {actual, expected}
 	},
 
-	"handles empty suite": async () => {
-		const actual = await evalTestSuite({})
-		const expected = {passes: 0, fails: 0, children: {}}
-		return {check: actual, deepEquals: expected}
-	},
+	"handles empty suite": async () => ({
+		actual: await evalTestSuite({}),
+		expected: {passes: 0, fails: 0, children: {}}
+	}),
 
 	"Preserves the structure of unbalanced trees": async () => {
 		const actual = await evalTestSuite({
 			'two plus two': () => ({
-				check: 2 + 2,
-				equals: 5
+				actual: 2 + 2,
+				expected: 5
 			}),
 			'functions gone wild': {
 				'naughty': () => ({
-					check: () => { throw 'error' },
+					assert: () => { throw 'error' },
 					throws: 'error'
 				}),
 				'nice': () => ({
-					check: () => {},
+					assert: () => {},
 					throws: 'error'
 				})
 			}
@@ -251,12 +251,12 @@ export default {
 			}
 		}
 					
-		return {check: actual, deepEquals: expected}
+		return {actual, expected}
 	},
 
 	'Resolves asynchronous tests': async () => {
 		const actual = await evalTestSuite({
-			'myAsyncFunction': () => Promise.resolve({check: 1, equals: 1})
+			'myAsyncFunction': () => Promise.resolve({actual: 1, expected: 1})
 		})
 					
 		const expected = {
@@ -267,10 +267,12 @@ export default {
 			}
 		}
 
-		return {check: actual, deepEquals: expected}
+		return {actual, expected}
 	},
 
 	"description of error throwing": () => {
 		throw new Error('lol')
+
+		return {actual: 0, expected: 0}
 	} 
 }

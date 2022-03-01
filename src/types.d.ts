@@ -1,16 +1,15 @@
 /*
 	DMT - Declarative Minimalist Testing
-
 */
 export as namespace DMT;
 
 export {
 	TestResult,
 	Change,
+	AssertEquals,
 	TestSuite,
 	TestResults,
 	TestFail,
-	AssertDeepEquals,
 	Test
 }
 
@@ -18,7 +17,7 @@ export {
 	The core of this program is transforming a test...
 */
 type Test = () => Assertion | Promise<Assertion>
-type Assertion = AssertEquals | AssertDeepEquals | AssertThrows
+type Assertion = AssertEquals | AssertThrows
 
 /* 
 	...to a test result: 
@@ -28,12 +27,8 @@ type TestResult = TestPass | TestFail
 /*
 	I find that one only needs to assert two things in practice: whether two objects are equal, and whether a given expression throws an exception.
 */
-type AssertDeepEquals = {check: any, deepEquals: any}
-type AssertThrows = {check: () => any, throws: any}
-/*
-	In the interests of performance, I have also added an assertion for primitive equality, though arguably this could omitted.
-*/
-type AssertEquals =	{check: any, equals: any}
+type AssertThrows = {assert: () => any, throws: any}
+type AssertEquals =	{actual: any, expected: any}
 
 /*
 	Other than succeeding, a test itself can tell me two useful things: that a comparison failed, or that the test case threw an un-expected exception. 
@@ -63,6 +58,9 @@ type TestResults = {
 	}
 }
 
-declare function dmt(elem: HTMLElement, testSuite: DMT.TestSuite): DocumentFragment
+declare function dmt(
+	elem: HTMLElement,
+	testSuite: DMT.TestSuite
+): DocumentFragment
 
 export default dmt

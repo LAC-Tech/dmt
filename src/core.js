@@ -1,5 +1,5 @@
 //@ts-check
-
+///<reference types="./types"/>
 import { diffJson } from "diff"
 import {equals} from "rambda"
 
@@ -9,18 +9,13 @@ export {evalTestSuite}
 const evalTest = async test => {
 	try {
 		const assertion = await Promise.resolve(test())
-		if ('equals' in assertion) {
-			if (assertion.check === assertion.equals)
-				return {kind: 'pass'}
-			else
-				return notEqual(assertion.check, assertion.equals)
-		} else if ('deepEquals' in assertion) {
+		if ('expected' in assertion) {
 			return evalDeepEquals(assertion)
 		} else if ('throws' in assertion) {
 			try {
-				assertion.check()
+				assertion.assert()
 			} catch (err) {
-				return evalDeepEquals({check: err, deepEquals: assertion.throws})
+				return evalDeepEquals({actual: err, expected: assertion.throws})
 			}
 
 			return notEqual(undefined, assertion.throws)
@@ -33,8 +28,8 @@ const evalTest = async test => {
 	}
 }
 
-/** @type {(assertion: DMT.AssertDeepEquals) => DMT.TestResult} */
-const evalDeepEquals = ({check: actual, deepEquals: expected}) => 
+/** @type {(assertion: DMT.AssertEquals) => DMT.TestResult} */
+const evalDeepEquals = ({actual, expected}) => 
 	equals(actual, expected) ? {kind: 'pass'} : notEqual(actual, expected)
 
 /** @type {(actual: any, expected: any) => DMT.TestFail} */

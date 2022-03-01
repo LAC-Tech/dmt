@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
 		"lib": ["dom", "es2019"],
-		"allowJs": true,
+		"checkJs": true,
 		"noEmit": true,
 		"strict": true
 	},
