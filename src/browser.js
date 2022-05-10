@@ -1,9 +1,9 @@
 //@ts-check
+import * as viewmodel from "./viewmodel.js"
 
 /** @param {DMT.TestResults} trs */
 export default ({fails, passes, children}) => {
-	const testSummary = fails == 0 ? '✓': `✖${fails}`
-	document.title = `dmt ${testSummary}`
+	document.title = viewmodel.title(fails)
 
 	const result = document.createDocumentFragment()
 	const style = document.createElement('style');
@@ -57,7 +57,6 @@ export default ({fails, passes, children}) => {
 	`
 
 	result.append(style)
-
 
 	for (const [k, v] of Object.entries(children))
 		result.appendChild(testResultsChild(k, v))

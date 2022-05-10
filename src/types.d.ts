@@ -57,10 +57,3 @@ type TestResults = {
 		[description: string]: TestResult | TestResults
 	}
 }
-
-declare function dmt(
-	elem: HTMLElement,
-	testSuite: DMT.TestSuite
-): DocumentFragment
-
-export default dmt
