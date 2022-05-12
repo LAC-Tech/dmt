@@ -11,7 +11,8 @@ export {
 	TestResults,
 	TestFail,
 	Test,
-	ViewModelKernel
+	ViewModelKernel,
+	ViewModel
 }
 
 /* 
@@ -59,10 +60,16 @@ type TestResults = {
 	}
 }
 
+/** @todo temporary interface */
 interface ViewModelKernel<T> {
-	title: (fails: number) => string
 	fail: (innerText: string) => T
 	success: (innerText: string) => T
 	tally: (type: 'success' | 'fail', s: string, n: number) => T
 	description: (str: string, suffix: T) => T
+}
+
+interface ViewModel<T> {
+	title: (fails: number) => string
+	successfulTest: (descr: string) => Node
+	failedTest: (descr: string, tf: TestFail) => Node
 }
