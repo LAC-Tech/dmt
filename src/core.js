@@ -22,7 +22,7 @@ const evalTest = async test => {
 		}
 
 		const keys = Object.keys(assertion)
-		throw `Unable to evaluate assertion with fields ${keys}`
+		throw `Unable to evaluate assertion with fielsd ${keys}`
 	} catch (exn) {
 		return {kind: 'fail', reason: {kind: 'threw-exn', error: `${exn}`}}
 	}

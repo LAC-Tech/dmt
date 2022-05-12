@@ -274,5 +274,9 @@ export default {
 		throw new Error('lol')
 
 		return {actual: 0, expected: 0}
-	} 
+	},
+
+	"example of failed test so I can look at it": () => {
+		return {actual: {x: 0, y: 4}, expected: {x: -1, y: 4, z: 9}}
+	}
 }

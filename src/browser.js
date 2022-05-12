@@ -1,9 +1,9 @@
 //@ts-check
-import * as viewmodel from "./viewmodel.js"
+//import viewmodel from "./viewmodel.js"
 
 /** @param {DMT.TestResults} trs */
 export default ({fails, passes, children}) => {
-	document.title = viewmodel.title(fails)
+	document.title = kernel.title(fails)
 
 	const result = document.createDocumentFragment()
 	const style = document.createElement('style');
@@ -15,8 +15,8 @@ export default ({fails, passes, children}) => {
 			}
 
 			/* ensures nested test results are indented */
-			details, .description, .success, .fail {
-				padding-left: 0.5em;
+			details, .failed-test {
+				padding-left: 1em;
 			}
 
 			.description {
@@ -45,9 +45,10 @@ export default ({fails, passes, children}) => {
 				font-size: small;
 			}
 
-			.result {
-				padding-top: 2px;
+			.failed-test, .successful-test {
+				padding-left: 1em;
 			}
+
 
 			pre {
 				font-family: monospace;
@@ -58,8 +59,11 @@ export default ({fails, passes, children}) => {
 
 	result.append(style)
 
-	for (const [k, v] of Object.entries(children))
-		result.appendChild(testResultsChild(k, v))
+	const topLevelNodes = 
+		Object.entries(children).map(([k, v]) => testResultsChild(k, v))
+
+	for (const node of topLevelNodes)
+		result.appendChild(node)
 
 	return result
 }
@@ -82,66 +86,44 @@ const h = (tagName, attributes, children = []) => {
 	return result
 }
 
-/** @param {string} innerText */
-const success = innerText => h('span', {innerText, className: 'success'})
+/** @type {(children: Node[]) => Node} */
+const failedTest = (children = []) => 
+	h('div', {className: 'failed-test'}, children)
 
-/** @param {string} innerText */
-const fail = innerText => h('span', {innerText, className: 'fail'})
+/** @param {string} descr */
+const successfulTest = descr => h('div', {className: 'successful-test'}, 
+		kernel.description(descr, kernel.success('✓')))
 
-/**
- * @param {string | Node | Array<string | Node>} children
- * @return {HTMLSpanElement}
- */
-const result = (children = []) => h('div', {className: 'result'}, children)
-
-/** @type {(type: 'success' | 'fail', s: string, n: number) => Node | String }*/
-const text = (type, s, n) => {
-	if (n == 0) return ""
-
-	return h('span', {className: type}, [
-		s,
-		h('small', {}, h('sub', {}, n.toString()))
-	])
-}
-
-/** @type {(descr: string, suffix: HTMLSpanElement) => HTMLSpanElement}*/
-const description = (descr, suffix) => 
-	h('span', {className: 'description'}, [descr, suffix])
-
-/** @type {(descr: string, tf: DMT.TestFail) => HTMLSpanElement} */
+/** @type {(descr: string, tf: DMT.TestFail) => Node} */
 const testFail = (descr, {reason}) => {
 	switch (reason.kind) {
 		case 'not-equal': {
 			const diffLines = reason.changes.map(({kind, value}) => {
 				switch (kind) {
-					case 'expected': return fail(value)
-					case 'actual': return success(value)
-					case 'same': return value
+					case 'expected': return kernel.fail(value)
+					case 'actual': return kernel.success(value)
+					case 'same': return h('span', {innerText: value})
 				}
 			})
 
-			return result([
-				description(descr, fail('✖')),
+			return failedTest([
+				kernel.description(descr, kernel.fail('✖')),
 				h('pre', {className: 'diff'}, diffLines)
 			])
 		}
-		case 'threw-exn': {		
-			return result([
-				description(descr, fail('✖')),
-				h('pre', {}, fail(reason.error))
+		case 'threw-exn': {
+			return failedTest([
+				kernel.description(descr, kernel.fail('✖')),
+				h('pre', {}, kernel.fail(reason.error))
 			])
 		}
 	}
 }
 
-/** @param {string} descr */
-const testPass = descr => 
-	result(h('span', {}, description(descr, success('✓'))))
-
 /** @type {(tr: DMT.TestResult) => (descr: string) => Node} */
 const testResult = tr => descr => {
 	switch (tr.kind) {
-		case 'pass': return testPass(descr)
+		case 'pass': return successfulTest(descr)
 		case 'fail': return testFail(descr, tr)
 	}
 }
@@ -150,7 +132,7 @@ const testResult = tr => descr => {
 const testResultsChild = (descr, v) => 
 	('kind' in v ? testResult(v) : testResults(v))(descr)
 
-/** @type {(trs: DMT.TestResults) => (descr: string) => HTMLElement} */
+/** @type {(trs: DMT.TestResults) => (descr: string) => Node} */
 const testResults = ({fails, passes, children}) => descr => {
 	const childElements = Object
 		.entries(children)
@@ -159,9 +141,25 @@ const testResults = ({fails, passes, children}) => descr => {
 	return h('details', {open: fails != 0}, [
 		h('summary', {}, [
 			h('b', {}, descr),
-			text('success', '✓', passes),
-			text('fail', '✖', fails)
+			...(passes > 0 ? [kernel.tally('success', '✓', passes)] : []),
+			...(fails > 0 ? [kernel.tally('fail', '✖', fails)] : [])
 		]),
 		...childElements
 	])
+}
+
+/** @type {DMT.ViewModelKernel<Node>} */
+const kernel = {
+	title: fails => {
+		const testSummary = fails == 0 ? '✓': `✖${fails}`
+		return `dmt ${testSummary}`
+	},
+	success: innerText => h('span', {innerText, className: 'success'}),
+	fail: innerText => h('span', {innerText, className: 'fail'}),
+	tally: (type, s, n) => h('span', {className: type}, [
+		s,
+		h('small', {}, h('sub', {}, n.toString()))
+	]),
+	description: (str, suffix) => 
+		h('div', {className: 'description'}, [str, suffix])
 }

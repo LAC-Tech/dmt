@@ -10,7 +10,8 @@ export {
 	TestSuite,
 	TestResults,
 	TestFail,
-	Test
+	Test,
+	ViewModelKernel
 }
 
 /* 
@@ -56,4 +57,12 @@ type TestResults = {
 	children: {
 		[description: string]: TestResult | TestResults
 	}
+}
+
+interface ViewModelKernel<T> {
+	title: (fails: number) => string
+	fail: (innerText: string) => T
+	success: (innerText: string) => T
+	tally: (type: 'success' | 'fail', s: string, n: number) => T
+	description: (str: string, suffix: T) => T
 }
