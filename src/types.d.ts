@@ -64,8 +64,12 @@ type TestResults = {
 interface ViewModelKernel<T> {
 	fail: (innerText: string) => T
 	success: (innerText: string) => T
-	tally: (type: 'success' | 'fail', s: string, n: number) => T
+	same: (innerText: string) => T
+	diff: (lines: T[]) => T
+	exn: (error: T) => T
+	failedTest: (descr: T, child: T) => T,
 	description: (str: string, suffix: T) => T
+	tally: (type: 'success' | 'fail', s: string, n: number) => T
 }
 
 interface ViewModelStrategy<T> {

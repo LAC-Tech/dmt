@@ -90,13 +90,22 @@ const h = (tagName, attributes, children = []) => {
 const kernel = {
 	success: innerText => h('span', {innerText, className: 'success'}),
 	fail: innerText => h('span', {innerText, className: 'fail'}),
+	same: innerText => h('span', {innerText}),
+	diff: lines => h('pre', {className: 'diff'}, lines),
+	exn: error => h('pre', {}, error),
+	failedTest: (descr, child) => h('div', {className: 'failed-test'}, [
+		descr,
+		child
+	]),
+	description: (str, suffix) => 
+		h('div', {className: 'description'}, [str, suffix]),
+
 	tally: (type, s, n) => h('span', {className: type}, [
 		s,
 		h('small', {}, h('sub', {}, n.toString()))
-	]),
-	description: (str, suffix) => 
-		h('div', {className: 'description'}, [str, suffix])
+	])
 }
+
 
 /** @type {DMT.ViewModelStrategy<Node>} */
 const strategy = {
@@ -113,22 +122,18 @@ const strategy = {
 						switch (kind) {
 							case 'expected': return kernel.fail(value)
 							case 'actual': return kernel.success(value)
-							case 'same': return h('span', {innerText: value})
+							case 'same': return kernel.same(value)
 						}
 					})
 
-					return h('pre', {className: 'diff'}, diffLines)
+					return kernel.diff(diffLines)
 				}
-				case 'threw-exn': {
-					return h('pre', {}, kernel.fail(reason.error))
-				}
+				case 'threw-exn': return kernel.exn(kernel.fail(reason.error))
 			}	
 		})()
 
-		return h('div', {className: 'failed-test'}, [
-			kernel.description(descr, kernel.fail('✖')),
-			child
-		])
+		return kernel.failedTest(
+			kernel.description(descr, kernel.fail('✖')), child)
 	},
 
 	testResultsLeaf: ({fails, passes, children}) => descr => {
@@ -142,4 +147,4 @@ const strategy = {
 	}
 }
 
-const {testResult, testChildren, testResults} = viewmodel(strategy)
+const testChildren = viewmodel(strategy)

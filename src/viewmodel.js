@@ -13,14 +13,16 @@ export default vm => {
 		}
 	}
 
-	/** @param {DMT.TestResults['children']} cs */
-	const testChildren = cs => Object
-		.entries(cs)
-		.map(([descr, v]) => ('kind' in v ? testResult(v) : testResults(v))(descr))
+
 
 	/** @type {(trs: DMT.TestResults) => (descr: string) => T} */
 	const testResults = ({fails, passes, children}) => 
 		vm.testResultsLeaf({passes, fails, children: testChildren(children)})
 
-	return {testResult, testChildren, testResults}
+		/** @param {DMT.TestResults['children']} cs */
+	const testChildren = cs => Object
+		.entries(cs)
+		.map(([descr, v]) => ('kind' in v ? testResult(v) : testResults(v))(descr))
+
+	return testChildren
 }
