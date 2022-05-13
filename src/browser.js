@@ -1,9 +1,10 @@
 //@ts-check
-//import viewmodel from "./viewmodel.js"
+import viewmodel from "./viewmodel.js"
 
 /** @param {DMT.TestResults} trs */
 export default ({fails, passes, children}) => {
-	document.title = vm.title(fails)
+	const testSummary = fails == 0 ? '✓': `✖${fails}`
+	document.title = `dmt ${testSummary}`
 
 	const result = document.createDocumentFragment()
 	const style = document.createElement('style');
@@ -85,31 +86,6 @@ const h = (tagName, attributes, children = []) => {
 	return result
 }
 
-/** @type {(tr: DMT.TestResult) => (descr: string) => Node} */
-const testResult = tr => descr => {
-	switch (tr.kind) {
-		case 'pass': return vm.successfulTest(descr)
-		case 'fail': return vm.failedTest(descr, tr)
-	}
-}
-
-/** @type {(trs: DMT.TestResults) => (descr: string) => Node} */
-const testResults = ({fails, passes, children}) => descr => {
-	return h('details', {open: fails != 0}, [
-		h('summary', {}, [
-			h('b', {}, descr),
-			...(passes > 0 ? [kernel.tally('success', '✓', passes)] : []),
-			...(fails > 0 ? [kernel.tally('fail', '✖', fails)] : [])
-		]),
-		...testChildren(children)
-	])
-}
-
-/** @param {DMT.TestResults['children']} cs */
-const testChildren = cs => Object
-	.entries(cs)
-	.map(([descr, v]) => ('kind' in v ? testResult(v) : testResults(v))(descr))
-
 /** @type {DMT.ViewModelKernel<Node>} */
 const kernel = {
 	success: innerText => h('span', {innerText, className: 'success'}),
@@ -122,12 +98,8 @@ const kernel = {
 		h('div', {className: 'description'}, [str, suffix])
 }
 
-/** @type {DMT.ViewModel<Node>} */
-const vm = {
-	title: fails => {
-		const testSummary = fails == 0 ? '✓': `✖${fails}`
-		return `dmt ${testSummary}`
-	},
+/** @type {DMT.ViewModelStrategy<Node>} */
+const strategy = {
 	/** @param {string} descr */
 	successfulTest: descr => h('div', {className: 'successful-test'}, 
 		kernel.description(descr, kernel.success('✓'))),
@@ -157,5 +129,17 @@ const vm = {
 			kernel.description(descr, kernel.fail('✖')),
 			child
 		])
+	},
+
+	testResultsLeaf: ({fails, passes, children}) => descr => {
+		const summary = h('summary', {}, [
+			h('b', {}, descr),
+			...(passes > 0 ? [kernel.tally('success', '✓', passes)] : []),
+			...(fails > 0 ? [kernel.tally('fail', '✖', fails)] : [])
+		])
+
+		return h('details', {open: fails != 0}, [summary, ...children])
 	}
 }
+
+const {testResult, testChildren, testResults} = viewmodel(strategy)

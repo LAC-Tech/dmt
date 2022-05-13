@@ -12,7 +12,7 @@ export {
 	TestFail,
 	Test,
 	ViewModelKernel,
-	ViewModel
+	ViewModelStrategy
 }
 
 /* 
@@ -68,8 +68,10 @@ interface ViewModelKernel<T> {
 	description: (str: string, suffix: T) => T
 }
 
-interface ViewModel<T> {
-	title: (fails: number) => string
-	successfulTest: (descr: string) => Node
-	failedTest: (descr: string, tf: TestFail) => Node
+interface ViewModelStrategy<T> {
+	successfulTest: (descr: string) => T
+	failedTest: (descr: string, tf: TestFail) => T
+	testResultsLeaf: (trs: {passes: number, fails: number, children: T[]})
+		=> (descr: string) 
+		=> T
 }
