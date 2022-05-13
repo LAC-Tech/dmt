@@ -86,65 +86,30 @@ const h = (tagName, attributes, children = []) => {
 	return result
 }
 
-/** @type {DMT.ViewModelKernel<Node>} */
-const kernel = {
-	success: innerText => h('span', {innerText, className: 'success'}),
-	fail: innerText => h('span', {innerText, className: 'fail'}),
+/** @type {DMT.ViewModelStrategy<Node>} */
+const vm = {
+	success: (...children) => h('span', {className: 'success'}, children),
+	fail: (...children) => h('span', {className: 'fail'}, children),
 	same: innerText => h('span', {innerText}),
 	diff: lines => h('pre', {className: 'diff'}, lines),
 	exn: error => h('pre', {}, error),
+	successfulTest: child => h('div', {className: 'successful-test'}, 
+		child),
 	failedTest: (descr, child) => h('div', {className: 'failed-test'}, [
 		descr,
 		child
 	]),
 	description: (str, suffix) => 
 		h('div', {className: 'description'}, [str, suffix]),
-
-	tally: (type, s, n) => h('span', {className: type}, [
-		s,
-		h('small', {}, h('sub', {}, n.toString()))
-	])
-}
-
-
-/** @type {DMT.ViewModelStrategy<Node>} */
-const strategy = {
-	/** @param {string} descr */
-	successfulTest: descr => h('div', {className: 'successful-test'}, 
-		kernel.description(descr, kernel.success('✓'))),
-
-	/** @type {(descr: string, tf: DMT.TestFail) => Node} */
-	failedTest: (descr, {reason}) => {
-		const child = (() => {
-			switch (reason.kind) {
-				case 'not-equal': {
-					const diffLines = reason.changes.map(({kind, value}) => {
-						switch (kind) {
-							case 'expected': return kernel.fail(value)
-							case 'actual': return kernel.success(value)
-							case 'same': return kernel.same(value)
-						}
-					})
-
-					return kernel.diff(diffLines)
-				}
-				case 'threw-exn': return kernel.exn(kernel.fail(reason.error))
-			}	
-		})()
-
-		return kernel.failedTest(
-			kernel.description(descr, kernel.fail('✖')), child)
-	},
-
-	testResultsLeaf: ({fails, passes, children}) => descr => {
+	sub: n => h('small', {}, h('sub', {}, n.toString())),
+	testResultsLeaf: (expanded, tallies, children) => text => {
 		const summary = h('summary', {}, [
-			h('b', {}, descr),
-			...(passes > 0 ? [kernel.tally('success', '✓', passes)] : []),
-			...(fails > 0 ? [kernel.tally('fail', '✖', fails)] : [])
+			h('b', {}, text),
+			...tallies
 		])
 
-		return h('details', {open: fails != 0}, [summary, ...children])
+		return h('details', {open: expanded}, [summary, ...children])
 	}
 }
 
-const testChildren = viewmodel(strategy)
+const testChildren = viewmodel(vm)

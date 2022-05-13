@@ -5,21 +5,59 @@
  * @param {DMT.ViewModelStrategy<T>} vm
  */
 export default vm => {
-	/** @type {(tr: DMT.TestResult) => (descr: string) => T} */
-	const testResult = tr => descr => {
-		switch (tr.kind) {
-			case 'pass': return vm.successfulTest(descr)
-			case 'fail': return vm.failedTest(descr, tr)
-		}
+		/** @param {string} text */
+	const successfulTest = text => 
+		vm.successfulTest(vm.description(text, vm.success('✓')))
+
+	/** @type {(text: string, tf: DMT.TestFail) => T} */
+	const failedTest = (text, {reason}) => {
+		const child = (() => {
+			switch (reason.kind) {
+				case 'not-equal': {
+					const diffLines = reason.changes.map(({kind, value}) => {
+						switch (kind) {
+							case 'expected': return vm.fail(value)
+							case 'actual': return vm.success(value)
+							case 'same': return vm.same(value)
+						}
+					})
+
+					return vm.diff(diffLines)
+				}
+				case 'threw-exn': return vm.exn(vm.fail(reason.error))
+			}
+		})()
+
+		return vm.failedTest(vm.description(text, vm.fail('✖')), child)
 	}
 
 
+	/**
+	 * @param {{passes: number, fails: number, children: T[]}} trs
+	 * @return {(descr: string) => T}
+	 */
+	const testResultsLeaf = ({fails, passes, children}) => {
+		const tallies = [
+			...(passes ? [vm.success('✓', vm.sub(passes))] : []),
+			...(fails ? [vm.fail('✖', vm.sub(fails))] : [])
+		]
+
+		return vm.testResultsLeaf(fails != 0, tallies, children)
+	}
+
+	/** @type {(tr: DMT.TestResult) => (descr: string) => T} */
+	const testResult = tr => descr => {
+		switch (tr.kind) {
+			case 'pass': return successfulTest(descr)
+			case 'fail': return failedTest(descr, tr)
+		}
+	}
 
 	/** @type {(trs: DMT.TestResults) => (descr: string) => T} */
 	const testResults = ({fails, passes, children}) => 
-		vm.testResultsLeaf({passes, fails, children: testChildren(children)})
+		testResultsLeaf({passes, fails, children: testChildren(children)})
 
-		/** @param {DMT.TestResults['children']} cs */
+	/** @param {DMT.TestResults['children']} cs */
 	const testChildren = cs => Object
 		.entries(cs)
 		.map(([descr, v]) => ('kind' in v ? testResult(v) : testResults(v))(descr))

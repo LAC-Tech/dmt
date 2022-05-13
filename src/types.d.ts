@@ -11,7 +11,6 @@ export {
 	TestResults,
 	TestFail,
 	Test,
-	ViewModelKernel,
 	ViewModelStrategy
 }
 
@@ -61,18 +60,22 @@ type TestResults = {
 }
 
 /** @todo temporary interface */
-interface ViewModelKernel<T> {
-	fail: (innerText: string) => T
-	success: (innerText: string) => T
+interface ViewModelStrategy<T> {
+	fail: (...children: (T | string) []) => T
+	success: (...children: (T | string)[]) => T
 	same: (innerText: string) => T
 	diff: (lines: T[]) => T
 	exn: (error: T) => T
-	failedTest: (descr: T, child: T) => T,
+	successfulTest: (child: T) => T
+	failedTest: (descr: T, child: T) => T
 	description: (str: string, suffix: T) => T
-	tally: (type: 'success' | 'fail', s: string, n: number) => T
+	sub: (n: number) => T
+	testResultsLeaf: (expanded: boolean, tallies: T[], children: T[]) 
+		=> (text: string)
+		=> T
 }
 
-interface ViewModelStrategy<T> {
+interface sadf<T> {
 	successfulTest: (descr: string) => T
 	failedTest: (descr: string, tf: TestFail) => T
 	testResultsLeaf: (trs: {passes: number, fails: number, children: T[]})
