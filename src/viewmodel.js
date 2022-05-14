@@ -13,6 +13,7 @@ export default vm => {
 	const failedTest = (text, {reason}) => {
 		const child = (() => {
 			switch (reason.kind) {
+				case 'threw-exn': return vm.exn(vm.fail(reason.error))
 				case 'not-equal': {
 					const diffLines = reason.changes.map(({kind, value}) => {
 						switch (kind) {
@@ -24,7 +25,6 @@ export default vm => {
 
 					return vm.diff(diffLines)
 				}
-				case 'threw-exn': return vm.exn(vm.fail(reason.error))
 			}
 		})()
 
@@ -54,13 +54,13 @@ export default vm => {
 	}
 
 	/** @type {(trs: DMT.TestResults) => (descr: string) => T} */
-	const testResults = ({fails, passes, children}) => 
-		testResultsLeaf({passes, fails, children: testChildren(children)})
+	const testResults = trs => 
+		testResultsLeaf({...trs, children: testChildren(trs.children)})
 
 	/** @param {DMT.TestResults['children']} cs */
 	const testChildren = cs => Object
-		.entries(cs)
-		.map(([descr, v]) => ('kind' in v ? testResult(v) : testResults(v))(descr))
+    .entries(cs)
+    .map(([descr, v]) => ('kind' in v ? testResult(v) : testResults(v))(descr))
 
 	return testChildren
 }

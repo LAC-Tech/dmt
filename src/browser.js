@@ -16,7 +16,13 @@ export default ({fails, passes, children}) => {
 			}
 
 			/* ensures nested test results are indented */
-			details, .failed-test {
+			/*
+			details, .failed-test, .successful-test, pre {
+				
+			}
+			*/
+
+			.indent {
 				padding-left: 1em;
 			}
 
@@ -46,15 +52,9 @@ export default ({fails, passes, children}) => {
 				font-size: small;
 			}
 
-			.failed-test, .successful-test {
-				padding-left: 1em;
-			}
-
-
 			pre {
 				font-family: monospace;
 				margin: 0;
-				padding-left: 1em;
 			}
 	`
 
@@ -91,11 +91,11 @@ const vm = {
 	success: (...children) => h('span', {className: 'success'}, children),
 	fail: (...children) => h('span', {className: 'fail'}, children),
 	same: innerText => h('span', {innerText}),
-	diff: lines => h('pre', {className: 'diff'}, lines),
-	exn: error => h('pre', {}, error),
-	successfulTest: child => h('div', {className: 'successful-test'}, 
+	diff: lines => h('pre', {className: 'diff indent'}, lines),
+	exn: error => h('pre', {className: 'indent'}, error),
+	successfulTest: child => h('div', {className: 'indent'}, 
 		child),
-	failedTest: (descr, child) => h('div', {className: 'failed-test'}, [
+	failedTest: (descr, child) => h('div', {className: 'indent'}, [
 		descr,
 		child
 	]),
@@ -108,7 +108,7 @@ const vm = {
 			...tallies
 		])
 
-		return h('details', {open: expanded}, [summary, ...children])
+		return h('details', {className: 'indent', open: expanded}, [summary, ...children])
 	}
 }
 

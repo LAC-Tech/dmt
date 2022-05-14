@@ -59,7 +59,6 @@ type TestResults = {
 	}
 }
 
-/** @todo temporary interface */
 interface ViewModelStrategy<T> {
 	fail: (...children: (T | string) []) => T
 	success: (...children: (T | string)[]) => T
@@ -72,13 +71,5 @@ interface ViewModelStrategy<T> {
 	sub: (n: number) => T
 	testResultsLeaf: (expanded: boolean, tallies: T[], children: T[]) 
 		=> (text: string)
-		=> T
-}
-
-interface sadf<T> {
-	successfulTest: (descr: string) => T
-	failedTest: (descr: string, tf: TestFail) => T
-	testResultsLeaf: (trs: {passes: number, fails: number, children: T[]})
-		=> (descr: string) 
 		=> T
 }
