@@ -34,15 +34,15 @@ export default vm => {
 
 	/**
 	 * @param {{passes: number, fails: number, children: T[]}} trs
-	 * @return {(descr: string) => T}
+	 * @return {(text: string) => T}
 	 */
-	const testResultsLeaf = ({fails, passes, children}) => {
+	const testResultsLeaf = ({fails, passes, children}) => text => {
 		const tallies = [
 			...(passes ? [vm.success('✓', vm.sub(passes))] : []),
 			...(fails ? [vm.fail('✖', vm.sub(fails))] : [])
 		]
 
-		return vm.testResultsLeaf(fails != 0, tallies, children)
+		return vm.details(fails != 0, vm.summary(text, tallies), children)
 	}
 
 	/** @type {(tr: DMT.TestResult) => (descr: string) => T} */

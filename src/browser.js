@@ -15,13 +15,6 @@ export default ({fails, passes, children}) => {
 				font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 			}
 
-			/* ensures nested test results are indented */
-			/*
-			details, .failed-test, .successful-test, pre {
-				
-			}
-			*/
-
 			.indent {
 				padding-left: 1em;
 			}
@@ -102,14 +95,17 @@ const vm = {
 	description: (str, suffix) => 
 		h('div', {className: 'description'}, [str, suffix]),
 	sub: n => h('small', {}, h('sub', {}, n.toString())),
-	testResultsLeaf: (expanded, tallies, children) => text => {
-		const summary = h('summary', {}, [
-			h('b', {}, text),
-			...tallies
+	summary: (text, tallies) =>  h('summary', {}, [
+		h('b', {}, text),
+		...tallies
+	]),
+	details: (expanded, summary, children) => {
+		return h('details', {className: 'indent', open: expanded}, [
+				summary, ...children
 		])
-
-		return h('details', {className: 'indent', open: expanded}, [summary, ...children])
 	}
 }
+
+
 
 const testChildren = viewmodel(vm)

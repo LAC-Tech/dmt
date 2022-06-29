@@ -69,7 +69,6 @@ interface ViewModelStrategy<T> {
 	failedTest: (descr: T, child: T) => T
 	description: (str: string, suffix: T) => T
 	sub: (n: number) => T
-	testResultsLeaf: (expanded: boolean, tallies: T[], children: T[]) 
-		=> (text: string)
-		=> T
+	summary: (text: string, tallies: T[]) => T
+	details: (expanded: boolean, summary: T, children: T[]) => T
 }
