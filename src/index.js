@@ -8,7 +8,7 @@ import { evalTestSuite} from './core.js'
  * @param {DMT.TestSuite} testSuite
  * @return {Promise<DocumentFragment>}
  */
-export const browser = async (elem, testSuite) => {
+export default async (elem, testSuite) => {
   const results = await evalTestSuite(testSuite)
   return elem.appendChild(browserRender(results))
 }

@@ -22,7 +22,7 @@ const evalTest = async test => {
 		}
 
 		const keys = Object.keys(assertion)
-		throw `Unable to evaluate assertion with fielsd ${keys}`
+		throw `Bad keys: ${keys.join(", ")}`
 	} catch (exn) {
 		return {kind: 'fail', reason: {kind: 'threw-exn', error: `${exn}`}}
 	}
