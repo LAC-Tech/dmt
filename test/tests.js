@@ -1,6 +1,6 @@
 //@ts-check
 
-import {evalTestSuite} from "../src/index.js"
+import {evalTestSuite} from "../src/core.js"
 
 /** @type {DMT.TestSuite} */
 export default {
