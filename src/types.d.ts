@@ -72,3 +72,8 @@ interface ViewModelStrategy<T> {
 	summary: (text: string, tallies: T[]) => T
 	details: (expanded: boolean, summary: T, children: T[]) => T
 }
+
+export default function(
+	elem: HTMLElement,
+	testSuite: DMT.TestSuite,
+): Promise<DocumentFragment>
