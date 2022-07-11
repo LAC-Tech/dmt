@@ -27,12 +27,6 @@ export default ({fails, passes, children}) => {
 				letter-spacing: 0.075em;
 			}
 
-			@media (min-width:960px) {
-				html {
-					font-size: x-large;
-				}
-			}
-
 			.success {	
 				color: #3fff3f;
 			}
@@ -42,7 +36,7 @@ export default ({fails, passes, children}) => {
 			}
 
 			.diff {
-				font-size: small;
+				font-size: smaller;
 			}
 
 			pre {
